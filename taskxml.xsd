@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:proforma:task:v0.9.2">
+    <xs:element name="task">
+      <xs:complexType>
+           <xs:sequence>
+                <xs:element ref="description"/>
+                <xs:element ref="proglang"/>
+                <xs:element ref="submission"/>
+                <xs:element ref="files"/>
+                <xs:element ref="model-solutions"/>
+                <xs:element ref="tests"/>
+                <xs:element ref="grading-hints" minOccurs="0"/>
+                <xs:element ref="meta-data"/>
+           </xs:sequence>
+           <xs:attribute name="lang" type="xs:string" use="required"/>
+      </xs:complexType>
+      <xs:keyref name="tests-filerefs-fileref" refer="fileid">
+           <xs:selector xpath="tests/test/test-configuration/filerefs"/>
+           <xs:field xpath="fileref"/>
+      </xs:keyref>
+    </xs:element>
+
+    <xs:element name="submission">
+      <xs:complexType>
+           <xs:attribute name="max-size" type="xs:positiveInteger" use="optional"/>
+           <xs:attribute name="unpack-files-from-archive-regexp" type="xs:string" use="optional" default=".*"/>
+           <xs:attribute name="unpack-files-from-archive" type="xs:boolean" use="optional" default="false"/>
+           <xs:attribute name="allowed-upload-filename-regexp" type="xs:string" use="optional" default=".*"/>
+      </xs:complexType>
+    </xs:element>
+
+    <xs:element name="model-solutions">
+      <xs:complexType>
+           <xs:sequence maxOccurs="unbounded">
+                <xs:element ref="model-solution"/>
+           </xs:sequence>
+      </xs:complexType>
+      <xs:unique name="model-solutionid">
+           <xs:selector xpath="model-solution"/>
+           <xs:field xpath="@id"/>
+      </xs:unique>
+    </xs:element>
+
+    <xs:element name="model-solution">
+      <xs:complexType>
+           <xs:simpleContent>
+                <xs:extension base="xs:string">
+                  <xs:attribute name="id" type="xs:string" use="required"/>
+                  <xs:attribute name="filename" type="xs:string" use="required"/>
+                  <xs:attribute name="comment" type="xs:string" use="optional"/>
+                  <xs:attribute ref="type" default="embedded"/>
+                </xs:extension>
+           </xs:simpleContent>
+      </xs:complexType>
+    </xs:element>
+
+    <xs:element name="meta-data">
+      <xs:complexType>
+           <xs:sequence>
+                <xs:element ref="title"/>
+                <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
+           </xs:sequence>
+      </xs:complexType>
+    </xs:element>
+
+    <xs:element name="proglang">
+      <xs:complexType>
+           <xs:simpleContent>
+                <xs:extension base="xs:string">
+                  <xs:attribute name="version" type="xs:string" use="required"/>
+                </xs:extension>
+           </xs:simpleContent>
+      </xs:complexType>
+    </xs:element>
+
+    <xs:element name="grading-hints">
+      <xs:complexType>
+           <xs:sequence>
+                <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
+           </xs:sequence>
+      </xs:complexType>
+    </xs:element>
+
+    <xs:element name="files">
+      <xs:complexType>
+           <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="file"/>
+           </xs:sequence>
+      </xs:complexType>
+      <xs:key name="fileid">
+           <xs:selector xpath="file"/>
+           <xs:field xpath="@id"/>
+      </xs:key>
+    </xs:element>
+
+    <xs:element name="file">
+      <xs:complexType>
+           <xs:simpleContent>
+                <xs:extension base="xs:string">
+                  <xs:attribute name="id" type="xs:string" use="required"/>
+                  <xs:attribute name="filename" type="xs:string" use="required"/>
+                  <xs:attribute name="comment" type="xs:string" use="optional"/>
+                  <xs:attribute name="class" use="required">
+                       <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                              <xs:enumeration value="template"/>
+                              <xs:enumeration value="library"/>
+                              <xs:enumeration value="workingdata"/>
+                              <xs:enumeration value="instruction"/>
+                              <xs:enumeration value="internal"/>
+                            </xs:restriction>
+                       </xs:simpleType>
+                  </xs:attribute>
+                  <xs:attribute ref="type" default="embedded"/>
+                </xs:extension>
+           </xs:simpleContent>
+      </xs:complexType>
+    </xs:element>
+
+    <xs:element name="description" type="xs:string"/>
+
+    <xs:attribute name="type">
+      <xs:simpleType>
+           <xs:restriction base="xs:string">
+                <xs:enumeration value="file"/>
+                <xs:enumeration value="embedded"/>
+           </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+
+    <xs:element name="title" type="xs:string"/>
+
+    <xs:element name="tests">
+      <xs:complexType>
+           <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="test"/>
+           </xs:sequence>
+      </xs:complexType>
+      <xs:unique name="testids">
+           <xs:selector xpath="test"/>
+           <xs:field xpath="@id"/>
+      </xs:unique>
+    </xs:element>
+
+    <xs:element name="test-type" type="xs:string"/>
+
+    <xs:element name="test-configuration">
+      <xs:complexType>
+           <xs:sequence>
+                <xs:element ref="filerefs" minOccurs="0"/>
+                <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
+                <xs:element ref="test-meta-data" minOccurs="0"/>
+           </xs:sequence>
+      </xs:complexType>
+    </xs:element>
+
+    <xs:element name="test">
+      <xs:complexType>
+           <xs:sequence>
+                <xs:element ref="title"/>
+                <xs:element ref="test-type"/>
+                <xs:element ref="test-configuration"/>
+           </xs:sequence>
+           <xs:attribute name="id" type="xs:string" use="required"/>
+           <xs:attribute name="validity" use="optional" default="1.00">
+                <xs:simpleType>
+                  <xs:restriction base="xs:decimal">
+                       <xs:totalDigits value="3"/>
+                       <xs:fractionDigits value="2"/>
+                       <xs:minInclusive value="0"/>
+                       <xs:maxInclusive value="1.00"/>
+                  </xs:restriction>
+                </xs:simpleType>
+           </xs:attribute>
+      </xs:complexType>
+    </xs:element>
+
+    <xs:element name="filerefs">
+      <xs:complexType>
+           <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="fileref"/>
+           </xs:sequence>
+      </xs:complexType>
+    </xs:element>
+
+    <xs:element name="fileref" type="xs:string"/>
+<xs:element name="test-meta-data">
+     <xs:complexType>
+      <xs:sequence>
+          <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
+      </xs:sequence>
+     </xs:complexType>
+</xs:element>
+</xs:schema>
