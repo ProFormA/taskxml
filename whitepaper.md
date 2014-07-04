@@ -1,6 +1,6 @@
 #An XML exchange format for (programming) tasks
 
-**Version 0.9.2**
+**Version 0.9.3**
 
 contributors listed in alphabetical order:
 
@@ -8,7 +8,7 @@ contributors listed in alphabetical order:
 Humboldt-Universität zu Berlin: Niels Pinkwart, Sven Strickroth  
 Technische Universität Clausthal: Oliver Müller  
 Universität Duisburg-Essen: Michael Striewe  
-Hochschule Hannover: Sebastian Becker, Oliver J. Bott  
+Hochschule Hannover: Sebastian Becker, Oliver J. Bott, Robert Garmann  
 Universität Osnabrück: Helmar Gust, Nadine Werner  
 Ostfalia Hochschule für Angewandte Wissenschaften: Stefan Bisitz, Stefan  
 Dröschler, Nils Jensen, Uta Priss, Oliver Rod  
@@ -54,12 +54,14 @@ the XML document.
 The general structure of the XML format is given as follows (this is
 meant to provide an overview and does not represent a minimal document):
 
-    <task lang="[LANG code]" xmlns="urn:proforma:task:v0.9.2">
+    <task lang="[LANG code]" xmlns="urn:proforma:task:v0.9.3">
     <description></description>
     <proglang version=""></proglang>
     <submission />
 
     <files />
+
+    <external-resources />
 
     <model-solutions />
 
@@ -80,6 +82,7 @@ The following code shows the XML Schema for the Task Format:
                 <xs:element ref="proglang"/>
                 <xs:element ref="submission"/>
                 <xs:element ref="files"/>
+                <xs:element ref="external-resources" minOccurs="0"/>
                 <xs:element ref="model-solutions"/>
                 <xs:element ref="tests"/>
                 <xs:element ref="grading-hints" minOccurs="0"/>
@@ -95,7 +98,7 @@ The following code shows the XML Schema for the Task Format:
 
 The document root element “task” holds the XML-namespace URI for the
 current version number of the XML Task Format. The only currently valid
-value is “urn:proforma:task:v0.9.2”. The task itself must have an
+value is “urn:proforma:task:v0.9.3”. The task itself must have an
 attribute “lang” which specifies the natural language used. The
 description, title etc should be written in this language. The content
 of the “lang” attribute must comply with the IETF BCP 47, RFC 4647 and
@@ -203,19 +206,18 @@ the XML file.
                          </xs:restriction>
                      </xs:simpleType>
                  </xs:attribute>
-                <xs:attribute ref="type" default="embedded"/>  
+                 <xs:attribute name="type" default="embedded">
+                    <xs:simpleType>
+                         <xs:restriction base="xs:string">
+                              <xs:enumeration value="file"/>
+                              <xs:enumeration value="embedded"/>
+                         </xs:restriction>
+                    </xs:simpleType>
+                 </xs:attribute>
              </xs:extension>
          </xs:simpleContent>
      </xs:complexType>
    </xs:element>
-   <xs:attribute name="type">
-     <xs:simpleType>
-         <xs:restriction base="xs:string">
-             <xs:enumeration value="file"/>
-             <xs:enumeration value="embedded"/>
-         </xs:restriction>
-     </xs:simpleType>
-    </xs:attribute>
 
 The file element includes or links a single file to a task. Each
 instance/file must have a (task) unique string in its “id” attribute (in
@@ -251,6 +253,48 @@ archive (which can be different from the filename attribute).
 
 
 
+###The external-resources part
+
+    <xs:element name="external-resources">
+      <xs:complexType>
+           <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="external-resource"/>
+           </xs:sequence>
+      </xs:complexType>
+      <xs:key name="external-resourceid">
+           <xs:selector xpath="external-resource"/>
+           <xs:field xpath="@id"/>
+      </xs:key>
+    </xs:element>
+
+The external-resources element contains 0 or more external-resource elements. An external-resource element is
+used to refer to a resource that is neither embedded nor directly attached to the task. 
+
+###The external-resource element
+
+    <xs:element name="external-resource">
+      <xs:complexType>
+      	   <xs:sequence>
+               <xs:element ref="description" minOccurs="0"/>
+               <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
+           </xs:sequence>
+           <xs:attribute name="id" type="xs:string" use="required"/>
+           <xs:attribute name="reference" type="xs:string" use="optional"/>
+      </xs:complexType>
+    </xs:element>
+
+
+Normally task files should be self-contained, but in rare cases the use of external resources is unavoidable for fulfilling or grading the task.  The external-resource element basically contains a reference to that kind of resources. In its simplest form, the resource is identified by an identifier contained in the “reference” attribute. More complicated references can be specified in child elements of any namespace.
+
+The idea behind external resources is that sometimes huge files needed by a grader cannot be bundled reasonably with the task itself. A different use case is that the task needs to reference the latest version (in contrast to a specific version) of a file, which changes frequently and which is hosted in a central repository like maven central repository. A third use case is a task, for which the grader needs to access a web service while grading. In all three use cases, attaching or embedding the file with the task is disadvantageous or even (for the web service) impossible. In these or in similar cases, the task.xml may reference the external resource by a unique name or any other identifier. Examples are the name or URL of a widely known database dump (e. g. ftp://ftp.fu-berlin.de/pub/misc/movies/database/) or the name and version number of a library (e. g. urn:mvn:groupId=org.mockito:artifactId=mockito-core:packaging=jar:version=1.9.5) or a web service URL. The semantic and the format of references is not defined by this exchange format. It could be a URL, URN or any other identifier. The semantic largely depends on how the grader interprets the identifier of the resource and where the referenced data can be cached. Also the exchange format does not define the distribution mechanism of resources (e. g. push from LMS to grader, active pull by the grader, etc.). Taken to the extreme, an external-resource element may mean, that the administrator has to install some software, service, or data in a grader specific location, before the task can be used to grade submissions. The identifier therefore does not need to be in a machine readable format. Further details about the semantic of the external-resource can be provided in the optional “description” element. The description may provide instructions in natural language how to install the required resource prior to grading so that the grader can interpret and resolve the reference attribute successfully when grading a submission.
+
+Identifying external resources can get quite complicated. Example: a SQL grader is able to work with either an Oracle or a MySQL database server. When working with Oracle the task must provide version A of a database dump, otherwise it must provide version B. Additionally there might be a range or a list of version numbers, that will fulfil the needs of the task. If the grader has one of these versions cached already, there is no need to install a different version. In order to cover the requirements of any grader, a task may specify detailed grader specific dependency and versioning information in child elements from any namespace.
+
+Each external resource element can be identified by its mandatory “id” attribute and is referenced by the test-configuration (see below in the test section).
+
+A task that references at least one external resource is not "self-contained" anymore. The author of the task should take care that the referenced resources are publicly available. Otherwise the task won't be reusable in other than the author's application context.
+
+
 ###The model-solutions part
 
     <xs:element name="model-solutions">
@@ -273,7 +317,14 @@ the task. For each model-solution a new model-solution element is added.
                     <xs:attribute name="id" type="xs:string" use="required"/>
                     <xs:attribute name="filename" type="xs:string" use="required"/>
                                                    <xs:attribute name="comment" type="xs:string" use=”optional"/>
-                    <xs:attribute ref="type" default="embedded"/>
+                    <xs:attribute name="type" default="embedded">
+                      <xs:simpleType>
+                         <xs:restriction base="xs:string">
+                              <xs:enumeration value="file"/>
+                              <xs:enumeration value="embedded"/>
+                         </xs:restriction>
+                      </xs:simpleType>
+                    </xs:attribute>
                 </xs:extension>
             </xs:simpleContent>
         </xs:complexType>
@@ -297,7 +348,7 @@ The tests element is used to provide automatic checks and tests for the
 task. More specific information about the test XML is provided in the
 [second section](#id.gmls3d60jimk) of this paper.
 
-##The grading-hints element##
+###The grading-hints element###
 
     <xs:element name="grading-hints">
         <xs:complexType>
@@ -344,9 +395,12 @@ The general structure of the test description is given as follows:
             <test-configuration>
                 <filerefs>
                     <fileref></fileref>
-    </filerefs>
+                </filerefs>
+                <externalresourcerefs>
+                    <externalresourceref></externalresourceref>
+                </externalresourcerefs>
             </test-configuration>
-                  <test-meta-data />
+            <test-meta-data />
     </test>
     </tests>
 
@@ -414,6 +468,7 @@ entries is specified in Appendix C.
         <xs:complexType>
             <xs:sequence>
                 <xs:element ref="filerefs" minOccurs="0"/>
+                <xs:element ref="externalresourcerefs" minOccurs="0"/>
                 <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:element ref="test-meta-data" minOccurs="0"/>
             </xs:sequence>
@@ -446,6 +501,26 @@ Several filerefs can be specified via file elements.
 The fileref element links a single file to a test based on the ID of the
 file which has to be defined in task/files. The ID has to be entered as
 the simple content of the fileref element.
+
+###The externalconfigurationrefs part
+
+    <xs:element name="externalconfigurationrefs">
+        <xs:complexType>
+            <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                    <xs:element ref="externalconfigurationref"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+Several externalconfigurationrefs can be specified via externalconfigurationref elements.
+
+###The externalconfigurationref element
+
+    <xs:element name="externalconfigurationref" type="xs:string"/>
+
+The externalconfigurationref element links a single external-configuration to a test based on the ID of the
+external-configuration which has to be defined in task/external-configurations. The ID has to be entered as
+the simple content of the externalconfigurationref element.
 
 ###The test-meta-data element
 
