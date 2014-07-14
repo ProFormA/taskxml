@@ -91,8 +91,12 @@ The following code shows the XML Schema for the Task Format:
             <xs:attribute name="lang" type="xs:string" use="required"/>
         </xs:complexType>
         <xs:keyref name="tests-filerefs-fileref" refer="fileid">
-             <xs:selector xpath="tests/test/test-configuration/filerefs"/>
-             <xs:field xpath="fileref/@refid"/>
+             <xs:selector xpath="tests/test/test-configuration/filerefs/fileref"/>
+             <xs:field xpath="@refid"/>
+        </xs:keyref>
+        <xs:keyref name="tests-extresrefs-extresref" refer="external-resourceid">
+             <xs:selector xpath="tests/test/test-configuration/externalresourcerefs/externalresourceref"/>
+             <xs:field xpath="@refid"/>
         </xs:keyref>
     </xs:element>
 

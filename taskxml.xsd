@@ -19,6 +19,10 @@
         <xs:selector xpath="tns:tests/tns:test/tns:test-configuration/tns:filerefs/tns:fileref"/>
            <xs:field xpath="@refid"/>
       </xs:keyref>
+      <xs:keyref name="tests-extresrefs-extresref" refer="tns:external-resourceid">
+        <xs:selector xpath="tns:tests/tns:test/tns:test-configuration/tns:externalresourcerefs/tns:externalresourceref"/>
+           <xs:field xpath="@refid"/>
+      </xs:keyref>
     </xs:element>
 
     <xs:element name="submission">
