@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:proforma:task:v0.9.3" xmlns:tns="urn:proforma:task:v0.9.3">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:proforma:task:v0.9.3" xmlns:tns="urn:proforma:task:v0.9.3" elementFormDefault="qualified">
     <xs:element name="task">
       <xs:complexType>
            <xs:sequence>
