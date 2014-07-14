@@ -90,10 +90,10 @@ The following code shows the XML Schema for the Task Format:
             </xs:sequence>
             <xs:attribute name="lang" type="xs:string" use="required"/>
         </xs:complexType>
-            <xs:keyref name="tests-filerefs-fileref" refer="fileid">
+        <xs:keyref name="tests-filerefs-fileref" refer="fileid">
              <xs:selector xpath="tests/test/test-configuration/filerefs"/>
              <xs:field xpath="fileref/@refid"/>
-         </xs:keyref>
+        </xs:keyref>
     </xs:element>
 
 The document root element “task” holds the XML-namespace URI for the
@@ -113,15 +113,15 @@ subset of HTML is allowed (see Appendix A).
 
 ###The proglang part
 
-   <xs:element name="proglang">
-     <xs:complexType>
+    <xs:element name="proglang">
+      <xs:complexType>
          <xs:simpleContent>
              <xs:extension base="xs:string">
                  <xs:attribute name="version" type="xs:string" use="required"/>
              </xs:extension>
          </xs:simpleContent>
-     </xs:complexType>
-   </xs:element>
+      </xs:complexType>
+    </xs:element>
 
 An instance of this element contains the programming/modelling/query
 language to which this task applies. A valid list of values is specified
@@ -176,10 +176,10 @@ be specified explicitly.
                 <xs:element ref="file"/>
             </xs:sequence>
         </xs:complexType>
-            <xs:key name="fileid">
+        <xs:key name="fileid">
              <xs:selector xpath="file"/>
              <xs:field xpath="@id"/>
-         </xs:key>
+        </xs:key>
     </xs:element>
 
 The files element contains 0 or more file elements. A file element is
@@ -188,8 +188,8 @@ the XML file.
 
 ###The file element
 
-   <xs:element name="file">
-     <xs:complexType>
+    <xs:element name="file">
+      <xs:complexType>
          <xs:simpleContent>
              <xs:extension base="xs:string">
                  <xs:attribute name="id" type="xs:string" use="required"/>
@@ -216,8 +216,8 @@ the XML file.
                  </xs:attribute>
              </xs:extension>
          </xs:simpleContent>
-     </xs:complexType>
-   </xs:element>
+      </xs:complexType>
+    </xs:element>
 
 The file element includes or links a single file to a task. Each
 instance/file must have a (task) unique string in its “id” attribute (in
@@ -328,10 +328,10 @@ the task. For each model-solution a new model-solution element is added.
                 </xs:extension>
             </xs:simpleContent>
         </xs:complexType>
-            <xs:unique name="model-solutionid">
+        <xs:unique name="model-solutionid">
              <xs:selector xpath="model-solution"/>
              <xs:field xpath="@id"/>
-         </xs:unique>
+        </xs:unique>
     </xs:element>
 
 The model-solution element includes or links a single model-solution to
@@ -401,7 +401,7 @@ The general structure of the test description is given as follows:
                 </externalresourcerefs>
             </test-configuration>
             <test-meta-data />
-    </test>
+        </test>
     </tests>
 
 The corresponding XML schema for the test XML structure is:
@@ -412,10 +412,10 @@ The corresponding XML schema for the test XML structure is:
                 <xs:element ref="test"/>
             </xs:sequence>
         </xs:complexType>
-            <xs:unique name="testids">
+        <xs:unique name="testids">
              <xs:selector xpath="test"/>
              <xs:field xpath="@id"/>
-         </xs:unique>
+        </xs:unique>
     </xs:element>
 
 ###The test element
