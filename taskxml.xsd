@@ -5,7 +5,7 @@
            <xs:sequence>
                 <xs:element ref="tns:description"/>
                 <xs:element ref="tns:proglang"/>
-                <xs:element ref="tns:submission"/>
+                <xs:element ref="tns:submission-restrictions"/>
                 <xs:element ref="tns:files"/>
                 <xs:element ref="tns:external-resources" minOccurs="0"/>
                 <xs:element ref="tns:model-solutions"/>
@@ -25,7 +25,7 @@
       </xs:keyref>
     </xs:element>
 
-    <xs:element name="submission">
+    <xs:element name="submission-restrictions">
       <xs:complexType>
            <xs:attribute name="max-size" type="xs:positiveInteger" use="optional"/>
            <xs:attribute name="unpack-files-from-archive-regexp" type="xs:string" use="optional" default=".*"/>

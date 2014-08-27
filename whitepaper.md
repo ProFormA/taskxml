@@ -57,7 +57,7 @@ meant to provide an overview and does not represent a minimal document):
     <task lang="[LANG code]" xmlns="urn:proforma:task:v0.9.4">
     <description></description>
     <proglang version=""></proglang>
-    <submission />
+    <submission-restrictions />
 
     <files />
 
@@ -80,7 +80,7 @@ The following code shows the XML Schema for the Task Format:
             <xs:sequence>
                 <xs:element ref="description"/>
                 <xs:element ref="proglang"/>
-                <xs:element ref="submission"/>
+                <xs:element ref="submission-restrictions"/>
                 <xs:element ref="files"/>
                 <xs:element ref="external-resources" minOccurs="0"/>
                 <xs:element ref="model-solutions"/>
@@ -135,9 +135,9 @@ to work with that version – any other requirements about version
 compatibility must be checked externally.)  The “version” must be
 entered as a “point” separated list of up to four unsigned integers.
 
-###The submission part
+###The submission-restrictions part
 
-    <xs:element name="submission">
+    <xs:element name="submission-restrictions">
         <xs:complexType>
             <xs:attribute name="max-size" type="xs:positiveInteger" use="optional"/>
             <xs:attribute name="allowed-upload-filename-regexp" type="xs:string" use="optional" default=".*"/>
