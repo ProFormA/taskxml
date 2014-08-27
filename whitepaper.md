@@ -5,13 +5,13 @@
 contributors listed in alphabetical order:
 
 
-Humboldt-Universität zu Berlin: Niels Pinkwart, Sven Strickroth  
-Technische Universität Clausthal: Oliver Müller  
-Universität Duisburg-Essen: Michael Striewe  
-Hochschule Hannover: Sebastian Becker, Oliver J. Bott, Robert Garmann  
-Universität Osnabrück: Helmar Gust, Nadine Werner  
-Ostfalia Hochschule für Angewandte Wissenschaften: Stefan Bisitz, Stefan  
-Dröschler, Nils Jensen, Uta Priss, Oliver Rod  
+Humboldt-Universität zu Berlin: Niels Pinkwart, Sven Strickroth
+Technische Universität Clausthal: Oliver Müller
+Universität Duisburg-Essen: Michael Striewe
+Hochschule Hannover: Sebastian Becker, Oliver J. Bott, Robert Garmann
+Universität Osnabrück: Helmar Gust, Nadine Werner
+Ostfalia Hochschule für Angewandte Wissenschaften: Stefan Bisitz, Stefan
+Dröschler, Nils Jensen, Uta Priss, Oliver Rod
 
 [TOC]
 
@@ -272,7 +272,7 @@ archive (which can be different from the filename attribute).
     </xs:element>
 
 The external-resources element contains 0 or more external-resource elements. An external-resource element is
-used to refer to a resource that is neither embedded nor directly attached to the task. 
+used to refer to a resource that is neither embedded nor directly attached to the task.
 
 ###The external-resource element
 
@@ -513,8 +513,8 @@ The fileref element links a single file to a test based on the ID of the
 file which has to be defined in task/files. The ID has to be entered as
 the refid attribute.
 
-Tagging of referenced files as an extension mechanism for attaching grader 
-specific meanings to files can be accomplished by inserting an optional tags 
+Tagging of referenced files as an extension mechanism for attaching grader
+specific meanings to files can be accomplished by inserting an optional tags
 child element.
 
 

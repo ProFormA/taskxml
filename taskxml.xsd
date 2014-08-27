@@ -150,7 +150,7 @@
 
     <xs:element name="external-resource">
       <xs:complexType>
-      	   <xs:sequence>
+           <xs:sequence>
                <xs:element ref="tns:description" minOccurs="0"/>
                <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
            </xs:sequence>
@@ -158,9 +158,8 @@
            <xs:attribute name="reference" type="xs:string" use="optional"/>
       </xs:complexType>
     </xs:element>
-    
-    <xs:element name="description" type="xs:string"/>
 
+    <xs:element name="description" type="xs:string"/>
 
     <xs:element name="title" type="xs:string"/>
 
@@ -251,9 +250,9 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-    
+
     <xs:element name="tag" type="xs:string"/>
-    
+
     <xs:element name="test-meta-data">
      <xs:complexType>
       <xs:sequence>
