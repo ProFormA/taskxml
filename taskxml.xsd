@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:proforma:task:v0.9.4" xmlns:tns="urn:proforma:task:v0.9.4" elementFormDefault="qualified">
     <xs:element name="task">
-      <xs:complexType>
-           <xs:sequence>
+        <xs:complexType>
+            <xs:sequence>
                 <xs:element ref="tns:description"/>
                 <xs:element ref="tns:proglang"/>
                 <xs:element ref="tns:submission-restrictions"/>
@@ -12,145 +12,145 @@
                 <xs:element ref="tns:tests"/>
                 <xs:element ref="tns:grading-hints" minOccurs="0"/>
                 <xs:element ref="tns:meta-data"/>
-           </xs:sequence>
-           <xs:attribute name="lang" type="xs:string" use="required"/>
-      </xs:complexType>
-      <xs:keyref name="tests-filerefs-fileref" refer="tns:fileid">
-        <xs:selector xpath="tns:tests/tns:test/tns:test-configuration/tns:filerefs/tns:fileref"/>
-           <xs:field xpath="@refid"/>
-      </xs:keyref>
-      <xs:keyref name="tests-extresrefs-extresref" refer="tns:external-resourceid">
-        <xs:selector xpath="tns:tests/tns:test/tns:test-configuration/tns:externalresourcerefs/tns:externalresourceref"/>
-           <xs:field xpath="@refid"/>
-      </xs:keyref>
-      <xs:keyref name="modelsolutions-model-solution-filerefs-fileref" refer="tns:fileid">
-           <xs:selector xpath="tns:model-solutions/tns:model-solution/tns:filerefs/tns:fileref"/>
-           <xs:field xpath="@refid"/>
-      </xs:keyref>
+            </xs:sequence>
+            <xs:attribute name="lang" type="xs:string" use="required"/>
+        </xs:complexType>
+        <xs:keyref name="tests-filerefs-fileref" refer="tns:fileid">
+            <xs:selector xpath="tns:tests/tns:test/tns:test-configuration/tns:filerefs/tns:fileref"/>
+            <xs:field xpath="@refid"/>
+        </xs:keyref>
+        <xs:keyref name="tests-extresrefs-extresref" refer="tns:external-resourceid">
+            <xs:selector xpath="tns:tests/tns:test/tns:test-configuration/tns:externalresourcerefs/tns:externalresourceref"/>
+            <xs:field xpath="@refid"/>
+        </xs:keyref>
+        <xs:keyref name="modelsolutions-model-solution-filerefs-fileref" refer="tns:fileid">
+            <xs:selector xpath="tns:model-solutions/tns:model-solution/tns:filerefs/tns:fileref"/>
+            <xs:field xpath="@refid"/>
+        </xs:keyref>
     </xs:element>
 
     <xs:element name="submission-restrictions">
-      <xs:complexType>
-           <xs:attribute name="max-size" type="xs:positiveInteger" use="optional"/>
-           <xs:attribute name="unpack-files-from-archive-regexp" type="xs:string" use="optional" default=".*"/>
-           <xs:attribute name="unpack-files-from-archive" type="xs:boolean" use="optional" default="false"/>
-           <xs:attribute name="allowed-upload-filename-regexp" type="xs:string" use="optional" default=".*"/>
-      </xs:complexType>
+        <xs:complexType>
+            <xs:attribute name="max-size" type="xs:positiveInteger" use="optional"/>
+            <xs:attribute name="unpack-files-from-archive-regexp" type="xs:string" use="optional" default=".*"/>
+            <xs:attribute name="unpack-files-from-archive" type="xs:boolean" use="optional" default="false"/>
+            <xs:attribute name="allowed-upload-filename-regexp" type="xs:string" use="optional" default=".*"/>
+        </xs:complexType>
     </xs:element>
 
     <xs:element name="model-solutions">
-      <xs:complexType>
-           <xs:sequence maxOccurs="unbounded">
+        <xs:complexType>
+            <xs:sequence maxOccurs="unbounded">
                 <xs:element ref="tns:model-solution"/>
-           </xs:sequence>
-      </xs:complexType>
-      <xs:unique name="model-solutionid">
-           <xs:selector xpath="tns:model-solution"/>
-           <xs:field xpath="@id"/>
-      </xs:unique>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:unique name="model-solutionid">
+            <xs:selector xpath="tns:model-solution"/>
+            <xs:field xpath="@id"/>
+        </xs:unique>
     </xs:element>
 
     <xs:element name="model-solution">
-      <xs:complexType>
-           <xs:sequence>
+        <xs:complexType>
+            <xs:sequence>
                 <xs:element ref="tns:filerefs"/>
-           </xs:sequence>
-           <xs:attribute name="id" type="xs:string" use="required"/>
-           <xs:attribute name="comment" type="xs:string" use="optional"/>
+            </xs:sequence>
+            <xs:attribute name="id" type="xs:string" use="required"/>
+            <xs:attribute name="comment" type="xs:string" use="optional"/>
         </xs:complexType>
     </xs:element>
 
     <xs:element name="meta-data">
-      <xs:complexType>
-           <xs:sequence>
+        <xs:complexType>
+            <xs:sequence>
                 <xs:element ref="tns:title"/>
                 <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
-           </xs:sequence>
-      </xs:complexType>
+            </xs:sequence>
+        </xs:complexType>
     </xs:element>
 
     <xs:element name="proglang">
-      <xs:complexType>
-           <xs:simpleContent>
+        <xs:complexType>
+            <xs:simpleContent>
                 <xs:extension base="xs:string">
-                  <xs:attribute name="version" type="xs:string" use="required"/>
+                    <xs:attribute name="version" type="xs:string" use="required"/>
                 </xs:extension>
-           </xs:simpleContent>
-      </xs:complexType>
+            </xs:simpleContent>
+        </xs:complexType>
     </xs:element>
 
     <xs:element name="grading-hints">
-      <xs:complexType>
-           <xs:sequence>
+        <xs:complexType>
+            <xs:sequence>
                 <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
-           </xs:sequence>
-      </xs:complexType>
+            </xs:sequence>
+        </xs:complexType>
     </xs:element>
 
     <xs:element name="files">
-      <xs:complexType>
-           <xs:sequence minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+            <xs:sequence minOccurs="0" maxOccurs="unbounded">
                 <xs:element ref="tns:file"/>
-           </xs:sequence>
-      </xs:complexType>
-      <xs:key name="fileid">
-        <xs:selector xpath="tns:file"/>
-           <xs:field xpath="@id"/>
-      </xs:key>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:key name="fileid">
+            <xs:selector xpath="tns:file"/>
+            <xs:field xpath="@id"/>
+        </xs:key>
     </xs:element>
 
     <xs:element name="file">
-      <xs:complexType>
-           <xs:simpleContent>
+        <xs:complexType>
+            <xs:simpleContent>
                 <xs:extension base="xs:string">
-                  <xs:attribute name="id" type="xs:string" use="required"/>
-                  <xs:attribute name="filename" type="xs:string" use="required"/>
-                  <xs:attribute name="comment" type="xs:string" use="optional"/>
-                  <xs:attribute name="class" use="required">
-                       <xs:simpleType>
+                    <xs:attribute name="id" type="xs:string" use="required"/>
+                    <xs:attribute name="filename" type="xs:string" use="required"/>
+                    <xs:attribute name="comment" type="xs:string" use="optional"/>
+                    <xs:attribute name="class" use="required">
+                        <xs:simpleType>
                             <xs:restriction base="xs:string">
-                              <xs:enumeration value="template"/>
-                              <xs:enumeration value="library"/>
-                              <xs:enumeration value="workingdata"/>
-                              <xs:enumeration value="instruction"/>
-                              <xs:enumeration value="internal"/>
+                                <xs:enumeration value="template"/>
+                                <xs:enumeration value="library"/>
+                                <xs:enumeration value="workingdata"/>
+                                <xs:enumeration value="instruction"/>
+                                <xs:enumeration value="internal"/>
                             </xs:restriction>
-                       </xs:simpleType>
-                  </xs:attribute>
-                  <xs:attribute name="type" default="embedded">
-                    <xs:simpleType>
-                         <xs:restriction base="xs:string">
-                              <xs:enumeration value="file"/>
-                              <xs:enumeration value="embedded"/>
-                         </xs:restriction>
-                    </xs:simpleType>
-                  </xs:attribute>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="type" default="embedded">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="file"/>
+                                <xs:enumeration value="embedded"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
                 </xs:extension>
-           </xs:simpleContent>
-      </xs:complexType>
+            </xs:simpleContent>
+        </xs:complexType>
     </xs:element>
 
     <xs:element name="external-resources">
-      <xs:complexType>
-           <xs:sequence minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+            <xs:sequence minOccurs="0" maxOccurs="unbounded">
                 <xs:element ref="tns:external-resource"/>
-           </xs:sequence>
-      </xs:complexType>
-      <xs:key name="external-resourceid">
-           <xs:selector xpath="tns:external-resource"/>
-           <xs:field xpath="@id"/>
-      </xs:key>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:key name="external-resourceid">
+            <xs:selector xpath="tns:external-resource"/>
+            <xs:field xpath="@id"/>
+        </xs:key>
     </xs:element>
 
     <xs:element name="external-resource">
-      <xs:complexType>
-           <xs:sequence>
-               <xs:element ref="tns:description" minOccurs="0"/>
-               <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
-           </xs:sequence>
-           <xs:attribute name="id" type="xs:string" use="required"/>
-           <xs:attribute name="reference" type="xs:string" use="optional"/>
-      </xs:complexType>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="tns:description" minOccurs="0"/>
+                <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
+            </xs:sequence>
+            <xs:attribute name="id" type="xs:string" use="required"/>
+            <xs:attribute name="reference" type="xs:string" use="optional"/>
+        </xs:complexType>
     </xs:element>
 
     <xs:element name="description" type="xs:string"/>
@@ -158,89 +158,89 @@
     <xs:element name="title" type="xs:string"/>
 
     <xs:element name="tests">
-      <xs:complexType>
-           <xs:sequence minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+            <xs:sequence minOccurs="0" maxOccurs="unbounded">
                 <xs:element ref="tns:test"/>
-           </xs:sequence>
-      </xs:complexType>
-      <xs:unique name="testids">
-           <xs:selector xpath="tns:test"/>
-           <xs:field xpath="@id"/>
-      </xs:unique>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:unique name="testids">
+            <xs:selector xpath="tns:test"/>
+            <xs:field xpath="@id"/>
+        </xs:unique>
     </xs:element>
 
     <xs:element name="test-type" type="xs:string"/>
 
     <xs:element name="test-configuration">
-      <xs:complexType>
-           <xs:sequence>
+        <xs:complexType>
+            <xs:sequence>
                 <xs:element ref="tns:filerefs" minOccurs="0"/>
                 <xs:element ref="tns:externalresourcerefs" minOccurs="0"/>
                 <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
                 <xs:element ref="tns:test-meta-data" minOccurs="0"/>
-           </xs:sequence>
-      </xs:complexType>
+            </xs:sequence>
+        </xs:complexType>
     </xs:element>
 
     <xs:element name="test">
-      <xs:complexType>
-           <xs:sequence>
+        <xs:complexType>
+            <xs:sequence>
                 <xs:element ref="tns:title"/>
                 <xs:element ref="tns:test-type"/>
                 <xs:element ref="tns:test-configuration"/>
-           </xs:sequence>
-           <xs:attribute name="id" type="xs:string" use="required"/>
-           <xs:attribute name="validity" use="optional" default="1.00">
+            </xs:sequence>
+            <xs:attribute name="id" type="xs:string" use="required"/>
+            <xs:attribute name="validity" use="optional" default="1.00">
                 <xs:simpleType>
-                  <xs:restriction base="xs:decimal">
-                       <xs:totalDigits value="3"/>
-                       <xs:fractionDigits value="2"/>
-                       <xs:minInclusive value="0"/>
-                       <xs:maxInclusive value="1.00"/>
-                  </xs:restriction>
+                    <xs:restriction base="xs:decimal">
+                        <xs:totalDigits value="3"/>
+                        <xs:fractionDigits value="2"/>
+                        <xs:minInclusive value="0"/>
+                        <xs:maxInclusive value="1.00"/>
+                    </xs:restriction>
                 </xs:simpleType>
-           </xs:attribute>
-      </xs:complexType>
+            </xs:attribute>
+        </xs:complexType>
     </xs:element>
 
     <xs:element name="filerefs">
-      <xs:complexType>
-           <xs:sequence maxOccurs="unbounded">
+        <xs:complexType>
+            <xs:sequence maxOccurs="unbounded">
                 <xs:element ref="tns:fileref"/>
-           </xs:sequence>
-      </xs:complexType>
+            </xs:sequence>
+        </xs:complexType>
     </xs:element>
 
     <xs:element name="fileref">
-      <xs:complexType>
-           <xs:sequence>
+        <xs:complexType>
+            <xs:sequence>
                 <xs:element ref="tns:tags" minOccurs="0"/>
-           </xs:sequence>
-           <xs:attribute name="refid" type="xs:string" use="required"/>
-      </xs:complexType>
+            </xs:sequence>
+            <xs:attribute name="refid" type="xs:string" use="required"/>
+        </xs:complexType>
     </xs:element>
 
     <xs:element name="externalresourcerefs">
         <xs:complexType>
             <xs:sequence minOccurs="0" maxOccurs="unbounded">
-                    <xs:element ref="tns:externalresourceref"/>
+                <xs:element ref="tns:externalresourceref"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
 
     <xs:element name="externalresourceref">
-      <xs:complexType>
-           <xs:sequence>
+        <xs:complexType>
+            <xs:sequence>
                 <xs:element ref="tns:tags" minOccurs="0"/>
-           </xs:sequence>
-           <xs:attribute name="refid" type="xs:string" use="required"/>
-      </xs:complexType>
+            </xs:sequence>
+            <xs:attribute name="refid" type="xs:string" use="required"/>
+        </xs:complexType>
     </xs:element>
 
     <xs:element name="tags">
         <xs:complexType>
             <xs:sequence minOccurs="0" maxOccurs="unbounded">
-                    <xs:element ref="tns:tag"/>
+                <xs:element ref="tns:tag"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -248,10 +248,10 @@
     <xs:element name="tag" type="xs:string"/>
 
     <xs:element name="test-meta-data">
-     <xs:complexType>
-      <xs:sequence>
-          <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
-      </xs:sequence>
-     </xs:complexType>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
+            </xs:sequence>
+        </xs:complexType>
     </xs:element>
 </xs:schema>
