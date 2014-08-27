@@ -98,6 +98,10 @@ The following code shows the XML Schema for the Task Format:
              <xs:selector xpath="tests/test/test-configuration/externalresourcerefs/externalresourceref"/>
              <xs:field xpath="@refid"/>
         </xs:keyref>
+        <xs:keyref name="modelsolutions-model-solution-filerefs-fileref" refer="tns:fileid">
+             <xs:selector xpath="tns:model-solutions/tns:model-solution/tns:filerefs/tns:fileref"/>
+             <xs:field xpath="@refid"/>
+        </xs:keyref>
     </xs:element>
 
 The document root element “task” holds the XML-namespace URI for the
@@ -316,21 +320,11 @@ the task. For each model-solution a new model-solution element is added.
 
     <xs:element name="model-solution">
         <xs:complexType>
-            <xs:simpleContent>
-                <xs:extension base="xs:string">
-                    <xs:attribute name="id" type="xs:string" use="required"/>
-                    <xs:attribute name="filename" type="xs:string" use="required"/>
-                                                   <xs:attribute name="comment" type="xs:string" use=”optional"/>
-                    <xs:attribute name="type" default="embedded">
-                      <xs:simpleType>
-                         <xs:restriction base="xs:string">
-                              <xs:enumeration value="file"/>
-                              <xs:enumeration value="embedded"/>
-                         </xs:restriction>
-                      </xs:simpleType>
-                    </xs:attribute>
-                </xs:extension>
-            </xs:simpleContent>
+             <xs:sequence>
+                <xs:element ref="tns:filerefs"/>
+             </xs:sequence>
+             <xs:attribute name="id" type="xs:string" use="required"/>
+             <xs:attribute name="comment" type="xs:string" use="optional"/>
         </xs:complexType>
         <xs:unique name="model-solutionid">
              <xs:selector xpath="model-solution"/>
@@ -338,11 +332,10 @@ the task. For each model-solution a new model-solution element is added.
         </xs:unique>
     </xs:element>
 
-The model-solution element includes or links a single model-solution to
-a task. Each instance/solution must have a (task) unique string in its
-“id” attribute. The model-solution can be directly embedded into the XML
-file or attached in an extra file within the zip archive (cf. “The file
-part”). The optional attribute “comment” can be used for additional
+The model-solution element links one single model-solution to a task. Each
+instance/solution must have a (task) unique string in its “id” attribute.
+The model-solution must refer to one or more files using the filerefs/fileref tag.
+The optional attribute “comment” can be used for additional
 information, for example if more than one model solution is provided it
 can be explained why there are several solutions.
 
@@ -490,7 +483,7 @@ configuration options.
 
     <xs:element name="filerefs">
         <xs:complexType>
-            <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:sequence maxOccurs="unbounded">
                 <xs:element ref="fileref"/>
             </xs:sequence>
         </xs:complexType>

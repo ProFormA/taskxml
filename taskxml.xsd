@@ -23,6 +23,10 @@
         <xs:selector xpath="tns:tests/tns:test/tns:test-configuration/tns:externalresourcerefs/tns:externalresourceref"/>
            <xs:field xpath="@refid"/>
       </xs:keyref>
+      <xs:keyref name="modelsolutions-model-solution-filerefs-fileref" refer="tns:fileid">
+           <xs:selector xpath="tns:model-solutions/tns:model-solution/tns:filerefs/tns:fileref"/>
+           <xs:field xpath="@refid"/>
+      </xs:keyref>
     </xs:element>
 
     <xs:element name="submission-restrictions">
@@ -48,22 +52,12 @@
 
     <xs:element name="model-solution">
       <xs:complexType>
-           <xs:simpleContent>
-                <xs:extension base="xs:string">
-                  <xs:attribute name="id" type="xs:string" use="required"/>
-                  <xs:attribute name="filename" type="xs:string" use="required"/>
-                  <xs:attribute name="comment" type="xs:string" use="optional"/>
-                  <xs:attribute name="type" default="embedded">
-                    <xs:simpleType>
-                         <xs:restriction base="xs:string">
-                              <xs:enumeration value="file"/>
-                              <xs:enumeration value="embedded"/>
-                         </xs:restriction>
-                    </xs:simpleType>
-                  </xs:attribute>
-                </xs:extension>
-           </xs:simpleContent>
-      </xs:complexType>
+           <xs:sequence>
+                <xs:element ref="tns:filerefs"/>
+           </xs:sequence>
+           <xs:attribute name="id" type="xs:string" use="required"/>
+           <xs:attribute name="comment" type="xs:string" use="optional"/>
+        </xs:complexType>
     </xs:element>
 
     <xs:element name="meta-data">
@@ -211,7 +205,7 @@
 
     <xs:element name="filerefs">
       <xs:complexType>
-           <xs:sequence minOccurs="0" maxOccurs="unbounded">
+           <xs:sequence maxOccurs="unbounded">
                 <xs:element ref="tns:fileref"/>
            </xs:sequence>
       </xs:complexType>
