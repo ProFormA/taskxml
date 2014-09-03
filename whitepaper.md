@@ -55,21 +55,21 @@ The general structure of the XML format is given as follows (this is
 meant to provide an overview and does not represent a minimal document):
 
     <task lang="[LANG code]" xmlns="urn:proforma:task:v0.9.4">
-    <description></description>
-    <proglang version=""></proglang>
-    <submission-restrictions />
+        <description></description>
+        <proglang version=""></proglang>
+        <submission-restrictions />
 
-    <files />
+        <files />
 
-    <external-resources />
+        <external-resources />
 
-    <model-solutions />
+        <model-solutions />
 
-    <tests />
+        <tests />
 
-    <grading-hints />
+        <grading-hints />
 
-    <meta-data />
+        <meta-data />
     </task>
 
 
@@ -114,7 +114,7 @@ ISO 639-1:2002 standards.
 
 ###The description part
 
-    <xs:element name="description"  type="xs:string" />
+    <xs:element name="description" type="xs:string" />
 
 An instance of this element contains the task description as text. A
 subset of HTML is allowed (see Appendix A).
@@ -202,7 +202,7 @@ the XML file.
              <xs:extension base="xs:string">
                  <xs:attribute name="id" type="xs:string" use="required"/>
                  <xs:attribute name="filename" type="xs:string" use=”required"/>
-                                                <xs:attribute name="comment" type="xs:string" use=”optional"/>
+                 <xs:attribute name="comment" type="xs:string" use=”optional"/>
                  <xs:attribute name="class" use="required">
                      <xs:simpleType>
                          <xs:restriction base="xs:string">
