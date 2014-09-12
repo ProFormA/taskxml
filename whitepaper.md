@@ -54,23 +54,23 @@ the XML document.
 The general structure of the XML format is given as follows (this is
 meant to provide an overview and does not represent a minimal document):
 
-    <task lang="[LANG code]" xmlns="urn:proforma:task:v0.9.4">
-        <description></description>
-        <proglang version=""></proglang>
-        <submission-restrictions />
+    <tns:task lang="[LANG code]" xmlns:tns="urn:proforma:task:v0.9.4">
+        <tns:description></tns:description>
+        <tns:proglang version=""></tns:proglang>
+        <tns:submission-restrictions />
 
-        <files />
+        <tns:files />
 
-        <external-resources />
+        <tns:external-resources />
 
-        <model-solutions />
+        <tns:model-solutions />
 
-        <tests />
+        <tns:tests />
 
-        <grading-hints />
+        <tns:grading-hints />
 
-        <meta-data />
-    </task>
+        <tns:meta-data />
+    </tns:task>
 
 
 The following code shows the XML Schema for the Task Format:
@@ -78,24 +78,24 @@ The following code shows the XML Schema for the Task Format:
     <xs:element name="task">
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="description"/>
-                <xs:element ref="proglang"/>
-                <xs:element ref="submission-restrictions"/>
-                <xs:element ref="files"/>
-                <xs:element ref="external-resources" minOccurs="0"/>
-                <xs:element ref="model-solutions"/>
-                <xs:element ref="tests"/>
-                <xs:element ref="grading-hints" minOccurs="0"/>
-                <xs:element ref="meta-data"/>
+                <xs:element ref="tns:description"/>
+                <xs:element ref="tns:proglang"/>
+                <xs:element ref="tns:submission-restrictions"/>
+                <xs:element ref="tns:files"/>
+                <xs:element ref="tns:external-resources" minOccurs="0"/>
+                <xs:element ref="tns:model-solutions"/>
+                <xs:element ref="tns:tests"/>
+                <xs:element ref="tns:grading-hints" minOccurs="0"/>
+                <xs:element ref="tns:meta-data"/>
             </xs:sequence>
             <xs:attribute name="lang" type="xs:string" use="required"/>
         </xs:complexType>
-        <xs:keyref name="tests-filerefs-fileref" refer="fileid">
-             <xs:selector xpath="tests/test/test-configuration/filerefs/fileref"/>
+        <xs:keyref name="tests-filerefs-fileref" refer="tns:fileid">
+             <xs:selector xpath="tns:tests/tns:test/tns:test-configuration/tns:filerefs/tns:fileref"/>
              <xs:field xpath="@refid"/>
         </xs:keyref>
-        <xs:keyref name="tests-extresrefs-extresref" refer="external-resourceid">
-             <xs:selector xpath="tests/test/test-configuration/externalresourcerefs/externalresourceref"/>
+        <xs:keyref name="tests-extresrefs-extresref" refer="tns:external-resourceid">
+             <xs:selector xpath="tns:tests/tns:test/tns:test-configuration/tns:externalresourcerefs/tns:externalresourceref"/>
              <xs:field xpath="@refid"/>
         </xs:keyref>
         <xs:keyref name="modelsolutions-model-solution-filerefs-fileref" refer="tns:fileid">
@@ -181,11 +181,11 @@ be specified explicitly.
     <xs:element name="files">
         <xs:complexType>
             <xs:sequence minOccurs="0" maxOccurs="unbounded">
-                <xs:element ref="file"/>
+                <xs:element ref="tns:file"/>
             </xs:sequence>
         </xs:complexType>
         <xs:key name="fileid">
-             <xs:selector xpath="file"/>
+             <xs:selector xpath="tns:file"/>
              <xs:field xpath="@id"/>
         </xs:key>
     </xs:element>
@@ -266,11 +266,11 @@ archive (which can be different from the filename attribute).
     <xs:element name="external-resources">
       <xs:complexType>
            <xs:sequence minOccurs="0" maxOccurs="unbounded">
-                <xs:element ref="external-resource"/>
+                <xs:element ref="tns:external-resource"/>
            </xs:sequence>
       </xs:complexType>
       <xs:key name="external-resourceid">
-           <xs:selector xpath="external-resource"/>
+           <xs:selector xpath="tns:external-resource"/>
            <xs:field xpath="@id"/>
       </xs:key>
     </xs:element>
@@ -282,8 +282,8 @@ used to refer to a resource that is neither embedded nor directly attached to th
 
     <xs:element name="external-resource">
       <xs:complexType>
-      	   <xs:sequence>
-               <xs:element ref="description" minOccurs="0"/>
+           <xs:sequence>
+               <xs:element ref="tns:description" minOccurs="0"/>
                <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
            </xs:sequence>
            <xs:attribute name="id" type="xs:string" use="required"/>
@@ -308,7 +308,7 @@ A task that references at least one external resource is not "self-contained" an
     <xs:element name="model-solutions">
         <xs:complexType>
             <xs:sequence maxOccurs="unbounded">
-                <xs:element ref="model-solution"/>
+                <xs:element ref="tns:model-solution"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -327,7 +327,7 @@ the task. For each model-solution a new model-solution element is added.
              <xs:attribute name="comment" type="xs:string" use="optional"/>
         </xs:complexType>
         <xs:unique name="model-solutionid">
-             <xs:selector xpath="model-solution"/>
+             <xs:selector xpath="tns:model-solution"/>
              <xs:field xpath="@id"/>
         </xs:unique>
     </xs:element>
@@ -366,7 +366,7 @@ to be exported and imported again from one system to another.
     <xs:element name="meta-data">
         <xs:complexType>
          <xs:sequence>
-             <xs:element ref="title"/>
+             <xs:element ref="tns:title"/>
              <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
          </xs:sequence>
         </xs:complexType>
@@ -385,32 +385,32 @@ test-meta-data element.
 
 The general structure of the test description is given as follows:
 
-    <tests>
-        <test id="unique ID" validity="">
-            <title></title>
-            <test-type></test-type>
-            <test-configuration>
-                <filerefs>
-                    <fileref></fileref>
-                </filerefs>
-                <externalresourcerefs>
-                    <externalresourceref></externalresourceref>
-                </externalresourcerefs>
-            </test-configuration>
-            <test-meta-data />
-        </test>
-    </tests>
+    <tns:tests>
+        <tns:test id="unique ID" validity="">
+            <tns:title></tns:title>
+            <tns:test-type></tns:test-type>
+            <tns:test-configuration>
+                <tns:filerefs>
+                    <tns:fileref></tns:fileref>
+                </tns:filerefs>
+                <tns:externalresourcerefs>
+                    <tns:externalresourceref></tns:externalresourceref>
+                </tns:externalresourcerefs>
+            </tns:test-configuration>
+            <tns:test-meta-data />
+        </tns:test>
+    </tns:tests>
 
 The corresponding XML schema for the test XML structure is:
 
     <xs:element name="tests">
         <xs:complexType>
             <xs:sequence minOccurs="0" maxOccurs="unbounded">
-                <xs:element ref="test"/>
+                <xs:element ref="tns:test"/>
             </xs:sequence>
         </xs:complexType>
         <xs:unique name="testids">
-             <xs:selector xpath="test"/>
+             <xs:selector xpath="tns:test"/>
              <xs:field xpath="@id"/>
         </xs:unique>
     </xs:element>
@@ -420,9 +420,9 @@ The corresponding XML schema for the test XML structure is:
     <xs:element name="test">
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="title"/>
-                <xs:element ref="test-type"/>
-                <xs:element ref="test-configuration"/>
+                <xs:element ref="tns:title"/>
+                <xs:element ref="tns:test-type"/>
+                <xs:element ref="tns:test-configuration"/>
             </xs:sequence>
             <xs:attribute name="validity" use="optional" default="1.00">
                 <xs:simpleType>
@@ -464,10 +464,10 @@ entries is specified in Appendix C.
     <xs:element name="test-configuration">
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="filerefs" minOccurs="0"/>
-                <xs:element ref="externalresourcerefs" minOccurs="0"/>
+                <xs:element ref="tns:filerefs" minOccurs="0"/>
+                <xs:element ref="tns:externalresourcerefs" minOccurs="0"/>
                 <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
-                <xs:element ref="test-meta-data" minOccurs="0"/>
+                <xs:element ref="tns:test-meta-data" minOccurs="0"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -484,7 +484,7 @@ configuration options.
     <xs:element name="filerefs">
         <xs:complexType>
             <xs:sequence maxOccurs="unbounded">
-                <xs:element ref="fileref"/>
+                <xs:element ref="tns:fileref"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -516,7 +516,7 @@ child element.
     <xs:element name="externalresourcerefs">
         <xs:complexType>
             <xs:sequence minOccurs="0" maxOccurs="unbounded">
-                <xs:element ref="externalresourceref"/>
+                <xs:element ref="tns:externalresourceref"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -545,7 +545,7 @@ Tagging of external resources is possible as it is for fileref elements (see the
     <xs:element name="tags">
         <xs:complexType>
             <xs:sequence minOccurs="0" maxOccurs="unbounded">
-                <xs:element ref="tag"/>
+                <xs:element ref="tns:tag"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
