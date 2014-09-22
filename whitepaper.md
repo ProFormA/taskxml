@@ -201,8 +201,8 @@ the XML file.
          <xs:simpleContent>
              <xs:extension base="xs:string">
                  <xs:attribute name="id" type="xs:string" use="required"/>
-                 <xs:attribute name="filename" type="xs:string" use=”required"/>
-                 <xs:attribute name="comment" type="xs:string" use=”optional"/>
+                 <xs:attribute name="filename" type="xs:string" use="optional"/>
+                 <xs:attribute name="comment" type="xs:string" use="optional"/>
                  <xs:attribute name="class" use="required">
                      <xs:simpleType>
                          <xs:restriction base="xs:string">
@@ -250,8 +250,8 @@ be provided in the optional “comment” attribute. The file itself can be
 embedded into the XML (recommended for shorter plain text files) or can
 be included in the ZIP-archive (recommended for binary files). If a file
 is embedded, the “type” attribute must be set to “embedded” and the text
-content of the element is the file content. The “filename“ attribute has
-to be set to define a filename (e.g., for Java classes where the class
+content of the element is the file content. The “filename“ attribute can
+be set to define a filename (e.g., for Java classes where the class
 name must be equal to the filename, it can also include a relative
 path). This attribute defines the name the file will have when it is
 executed. If the name is unimportant, a default name can be used. If a
