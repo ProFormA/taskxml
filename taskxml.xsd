@@ -195,9 +195,6 @@
     </xs:complexType>
 
     <xs:complexType name="fileref">
-        <xs:sequence>
-            <xs:element name="tags" type="tns:tags" minOccurs="0"/>
-        </xs:sequence>
         <xs:attribute name="refid" type="xs:string" use="required"/>
     </xs:complexType>
 
@@ -208,21 +205,8 @@
     </xs:complexType>
 
     <xs:complexType name="externalresourceref">
-        <xs:sequence>
-            <xs:element name="tags" type="tns:tags" minOccurs="0"/>
-        </xs:sequence>
         <xs:attribute name="refid" type="xs:string" use="required"/>
     </xs:complexType>
-
-    <xs:complexType name="tags">
-        <xs:sequence minOccurs="0" maxOccurs="unbounded">
-            <xs:element name="tag" type="tns:tag"/>
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:simpleType name="tag">
-        <xs:restriction base="xs:string"/>
-    </xs:simpleType>
 
     <xs:complexType name="test-meta-data">
         <xs:sequence>

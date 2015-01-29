@@ -498,9 +498,6 @@ Several filerefs can be specified via fileref elements.
 
     <xs:element name="fileref">
         <xs:complexType>
-            <xs:sequence>
-                <xs:element ref="tns:tags" minOccurs="0"/>
-            </xs:sequence>
             <xs:attribute name="refid" type="xs:string" use="required"/>
         </xs:complexType>
     </xs:element>
@@ -508,11 +505,6 @@ Several filerefs can be specified via fileref elements.
 The fileref element links a single file to a test based on the ID of the
 file which has to be defined in task/files. The ID has to be entered as
 the refid attribute.
-
-Tagging of referenced files as an extension mechanism for attaching grader
-specific meanings to files can be accomplished by inserting an optional tags
-child element.
-
 
 ###The externalresourcerefs part
 
@@ -530,9 +522,6 @@ Several externalresourcerefs can be specified via externalresourceref elements.
 
     <xs:element name="externalresourceref">
         <xs:complexType>
-            <xs:sequence>
-                <xs:element ref="tns:tags" minOccurs="0"/>
-            </xs:sequence>
             <xs:attribute name="refid" type="xs:string" use="required"/>
         </xs:complexType>
     </xs:element>
@@ -540,27 +529,6 @@ Several externalresourcerefs can be specified via externalresourceref elements.
 The externalresourceref element links a single external-resource to a test based on the ID of the
 external-resource which has to be defined in task/external-resources. The ID has to be entered as
 the refid attribute.
-
-Tagging of external resources is possible as it is for fileref elements (see there).
-
-###The tags part
-
-    <xs:element name="tags">
-        <xs:complexType>
-            <xs:sequence minOccurs="0" maxOccurs="unbounded">
-                <xs:element ref="tns:tag"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-
-Several tags can be specified via tag elements.
-
-###The tag element
-
-    <xs:element name="tag" type="xs:string"/>
-
-The tag element puts a string label to a fileref or an externalresourceref element. The meaning of a tag is not defined by this exchange format. Tags can be seen as an extension point of the exchange format, where graders can define their own tags with their own grader specific meaning. Tagging can be useful for example when the class attribute of a file does not provide sufficient information for the grader to derive a file's role played during the grading process.
-
 
 ###The test-meta-data element
 
