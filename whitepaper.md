@@ -208,7 +208,7 @@ the XML file.
                          <xs:restriction base="xs:string">
                              <xs:enumeration value="template"/>
                              <xs:enumeration value="library"/>
-                             <xs:enumeration value="workingdata"/>
+                             <xs:enumeration value="inputdata"/>
                              <xs:enumeration value="instruction"/>
                              <xs:enumeration value="internal"/>
                          </xs:restriction>
