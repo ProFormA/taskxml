@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="urn:proforma:unittest" targetNamespace="urn:proforma:unittest" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="urn:proforma:tests:unittest:v1" targetNamespace="urn:proforma:tests:unittest:v1" elementFormDefault="qualified" attributeFormDefault="unqualified">
     <xs:element name="unittest">
         <xs:complexType>
             <xs:sequence>
