@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:task lang="en" xmlns:p="urn:proforma:task:v0.9.4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:proforma:task:v0.9.4 taskxml.xsd">
+    <p:description>Calculate the n-th Fibonacci number. As a reminder: The first two Fibonacci numbers are 0 and 1. The following numbers are the sum of the previous two numbers (0, 1, 1, 2, 3, 5, 8, 13, 21...). The class should be named Fibonacci and the method to be written fibonacci has an int as an input parameter.</p:description>
+    <p:proglang version="1.4">java</p:proglang>
+    <p:submission-restrictions allowed-upload-filename-regexp="Fibonacci\.java"/>
+    <p:files>
+        <p:file class="internal" filename="FibonacciTest.java" id="f1">
+import junit.framework.TestCase;
+public class FibonacciTest extends TestCase {
+  public void testPos() {
+    assertEquals(13, Fibonacci.fibonacci(7));
+  }
+  public void testNull() {
+    assertEquals(0, Fibonacci.fibonacci(0));
+  }
+}
+</p:file>
+        <p:file class="internal" filename="Fibonacci.java" id="f2">
+public class Fibonacci {
+  public int fibonacci(int i) {
+    if (i &lt;= 0) return 0;
+    else if (i == 1) return 1;
+    return fibonacci(i - 2) + fibonacci(i - 1);
+  }
+}
+</p:file>
+    </p:files>
+    <p:model-solutions>
+        <p:model-solution id="m1">
+            <p:filerefs>
+                <p:fileref refid="f2"/>
+            </p:filerefs>
+        </p:model-solution>
+    </p:model-solutions>
+    <p:tests>
+        <p:test id="t1">
+            <p:title>Compilation test</p:title>
+            <p:test-type>java-compilation</p:test-type>
+            <p:test-configuration/>
+        </p:test>
+        <p:test id="t2">
+            <p:title>Calculation test</p:title>
+            <p:test-type>unittest</p:test-type>
+            <p:test-configuration xmlns:u="urn:proforma:tests:unittest:v1" xsi:schemaLocation="urn:proforma:tests:unittest:v1 proforma-unittest.xsd">
+                <p:filerefs>
+                    <p:fileref refid="f1"/>
+                </p:filerefs>
+                <u:unittest framework="JUnit" version="3">
+                    <u:main-class>FibonacciTest</u:main-class>
+                </u:unittest>
+            </p:test-configuration>
+        </p:test>
+    </p:tests>
+    <p:meta-data>
+        <p:title>Calculation of n-th Fibonacci number</p:title>
+    </p:meta-data>
+</p:task>
