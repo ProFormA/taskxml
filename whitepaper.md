@@ -210,6 +210,7 @@ the XML file.
                              <xs:enumeration value="library"/>
                              <xs:enumeration value="inputdata"/>
                              <xs:enumeration value="instruction"/>
+                             <xs:enumeration value="internal-library"/>
                              <xs:enumeration value="internal"/>
                          </xs:restriction>
                      </xs:simpleType>
@@ -240,6 +241,8 @@ using the “class” attribute with one of the following values:
     students should work with.
 -   “instruction”: The file contains further instructions for handling
     the task, e.g. an UML activity diagram.
+-   “internal-library”: This file is not visible for students and holds
+    libraries which are required for processing the tests within the system.
 -   “internal”: This file is not visible for students and holds files
     which are required for processing the task/tests within the system.
 

@@ -110,6 +110,7 @@
                             <xs:enumeration value="library"/>
                             <xs:enumeration value="inputdata"/>
                             <xs:enumeration value="instruction"/>
+                            <xs:enumeration value="internal-internal"/>
                             <xs:enumeration value="internal"/>
                         </xs:restriction>
                     </xs:simpleType>
