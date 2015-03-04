@@ -459,7 +459,7 @@ specified for the task itself.
 
     <xs:element name="test-type" type="xs:string"/>
 
-Examples of values are: java-syntax, java-junittest3. A list of allowed
+Examples of values are: java-syntax, unittest. A list of allowed
 entries is specified in Appendix C.
 
 ###The test-configuration part
