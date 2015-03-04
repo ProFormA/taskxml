@@ -346,7 +346,7 @@ can be explained why there are several solutions.
 
 The tests element is used to provide automatic checks and tests for the
 task. More specific information about the test XML is provided in the
-[second section](#Test section) of this paper.
+[second section](#test-section) of this paper.
 
 ###The grading-hints element###
 
