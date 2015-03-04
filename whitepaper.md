@@ -27,7 +27,7 @@ e-assessment tools considered for this format are Praktomat, VIPS, JACK,
 GATE or Moodle-Grapper WS (inspired by Web-CAT) most of which are
 included in the eCULT project “ProFormA”. The latest version of this
 document and the corresponding XML Schema can be found at this address:
-http://go.ecult.me/13022046A
+https://github.com/ProFormA/taskxml/
 
 ##General Structure
 
@@ -565,11 +565,11 @@ layouts.
 ##Appendix C: List of test types
 
 -   java-compilation
--   java-junit3
 -   java-checkstyle
 -   java-code-coverage-emma
 -   java-findbugs
 -   java-pmd
+-   unittest (urn:proforma:tests:unittest:v1)
 -   dejagnu
 -   anonymity (heuristics for checking that students have not included
     their names in the code)
