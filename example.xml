@@ -2,7 +2,11 @@
 <p:task lang="en" xmlns:p="urn:proforma:task:v0.9.4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:proforma:task:v0.9.4 taskxml.xsd">
     <p:description>Calculate the n-th Fibonacci number. As a reminder: The first two Fibonacci numbers are 0 and 1. The following numbers are the sum of the previous two numbers (0, 1, 1, 2, 3, 5, 8, 13, 21...). The class should be named Fibonacci and the method to be written fibonacci has an int as an input parameter.</p:description>
     <p:proglang version="1.4">java</p:proglang>
-    <p:submission-restrictions allowed-upload-filename-regexp="Fibonacci\.java"/>
+    <p:submission-restrictions>
+    	<p:files-restriction>
+    		<p:required filename="Fibonacci.java"/>
+    	</p:files-restriction>
+    </p:submission-restrictions>
     <p:files>
         <p:file class="internal" filename="FibonacciTest.java" id="f1">
 import junit.framework.TestCase;
