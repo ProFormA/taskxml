@@ -399,8 +399,8 @@ The general structure of the test description is given as follows:
                 <tns:externalresourcerefs>
                     <tns:externalresourceref></tns:externalresourceref>
                 </tns:externalresourcerefs>
+                <tns:test-meta-data />
             </tns:test-configuration>
-            <tns:test-meta-data />
         </tns:test>
     </tns:tests>
 
