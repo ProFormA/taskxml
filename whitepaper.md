@@ -148,41 +148,176 @@ entered as a “point” separated list of up to four unsigned integers.
 ###The submission-restrictions part
 
 ```xml
-    <xs:element name="submission-restrictions">
-        <xs:complexType>
-            <xs:attribute name="max-size" type="xs:positiveInteger" use="optional"/>
-            <xs:attribute name="allowed-upload-filename-regexp" type="xs:string" use="optional" default=".*"/>
-            <xs:attribute name="unpack-files-from-archive" type="xs:boolean" use="optional" default="false"/>
-            <xs:attribute name="unpack-files-from-archive-regexp" type="xs:string" use="optional" default=".*"/>
-        </xs:complexType>
-    </xs:element>
+<xs:complexType name="submission-restrictions">
+	<xs:choice>
+		<xs:element name="archive-restrictions" type="tns:archiverestr-type"/>
+		<xs:element name="files-restrictions" type="tns:file-restr-type"/>
+		<xs:element name="regexp-restrictions" type="tns:file-regexp-restr-type"/>
+	</xs:choice>
+</xs:complexType>
 ```
 
 An instance of this element can specify restrictions for the upload of
-(solution) files - by default there are no restrictions. The possible
-restrictions can be entered into a set of four optional attributes:
-“max-size”, “allowed-upload-filename-regexp”,
-“unpack-files-from-archive”, and “unpack-files-from-archive-regexp”. A
-prefix of “\^” and a postfix of “\$” is implicitly assumed and must not
-be specified explicitly.
+(solution) files - by default there are no restrictions. There is a choose
+between three possible restrictions types. 
+- [archive-restriction](#archive-restriction) 
+- [file-restriction](#file-restriction) 
+- [regexp-restriction](#regexp-restriction)
 
--   “max-size” specifies the maximum size of a file in bytes which
-    should be accepted. Systems which have a stronger limit of the file
-    size should print a warning to the importing user. If this attribute
-    is missing, a system default value will be used. 
--   “allowed-upload-filename-regexp” holds a regular expression of the
-    filenames (only the filename, without path) which the system should
-    accept. 
--   "unpack-files-from-archive" specifies if uploaded archives (zip/jar)
-    should be unpacked automatically. If it is set to *false,* no
-    extraction takes place and the archive is used as it is. 
--   In case "unpack-files-from-archive" is set to *true,*
-    “unpack-files-from-archive-regexp” is honoured which holds a regular
-    expression that controls which files are automatically extracted
-    (the filename of the uploaded archive must of course match
-    “allowed-upload-filename-regexp”). Only matching files (the whole
-    path of the zip-items matches with “/” as path separator) are
-    extracted from the archive.
+All restriction types have two optional attributes
+
+-  “max-size” specifies the maximum size of a file in bytes which should be
+   accepted. Systems which have a stronger limit of the file size should print a
+   warning to the importing user. If this attribute is missing, a system default
+   value will be used.
+-  "mimetype-regexp" specifies the mimetype by regular expression of files the
+   system should accept (specified regexp language in [regexp-language-restriction]
+     (#regexp-language-specification))
+
+```xml
+<xs:attributeGroup name="maxsize-attr">
+	<xs:attribute name="max-size" type="xs:positiveInteger" use="optional"/>
+</xs:attributeGroup>
+<xs:attributeGroup name="mimetype-attr">
+	<xs:attribute name="mime-type-regexp" type="xs:string" use="optional"/>
+</xs:attributeGroup>
+```
+####Archive restriction
+
+```xml
+<xs:complexType name="archiverestr-type">
+	<xs:choice>
+		<xs:element name="unpack-files-from-archive-regexp" type="xs:string" maxOccurs="1"/>
+		<xs:element name="file-restrictions">
+			<xs:complexType>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="required">
+						<xs:complexType>
+							<xs:attributeGroup ref="tns:mimetype-attr"/>
+							<xs:attribute name="path" use="required"/>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="optional">
+						<xs:complexType>
+							<xs:attributeGroup ref="tns:mimetype-attr"/>
+							<xs:attribute name="path" use="required"/>
+						</xs:complexType>
+					</xs:element>
+				</xs:choice>
+			</xs:complexType>
+		</xs:element>
+	</xs:choice>
+	<xs:attributeGroup ref="tns:maxsize-attr"/>
+	<xs:attributeGroup ref="tns:mimetype-attr"/>
+	<xs:attributeGroup ref="tns:archive-attr"/>
+</xs:complexType>
+...
+<xs:attributeGroup name="archive-attr">
+	<xs:attribute name="unpack-files-from-archive" type="xs:boolean" use="optional" default="false"/>
+	<xs:attribute name="allowed-archive-filename" type="xs:string" use="optional"/>
+</xs:attributeGroup>
+```
+
+ - "unpack-files-from-archive" specifies if uploaded archives (zip/jar) should
+   be unpacked automatically. If it is set to *false,* no extraction takes place
+   and the archive is used as it is.
+ - the filename of the uploaded archive must match "allowed-archive-filename"
+ 
+There is a choice for handling the file restrictions.
+
+1. by regexp: The archive may contain many files. The regular expression specifies, which files will be extracted from the archive
+
+```xml
+   <tns:submission-restrictions>
+        <tns:archive-restrictions max-size="[size in bytes]" mime-type-regexp="[mimetype regexp]" unpack-files-from-archive="[true/false]">
+              <tns:unpack-files-from-archive-regexp>regular expression</tns:unpack-files-from-archive-regexp>
+        </tns:archive-restrictions>
+    </tns:submission-restrictions>
+``` 
+
+ -   “unpack-files-from-archive-regexp” holds a regular expression that
+     controls which files are automatically extracted. Only matching files (the
+     whole path of the zip-items matches with “/” as path separator) are
+     extracted from the archive (specified regexp language in [regexp-language-restriction]
+     (#regexp-language-specification)).
+ 
+2. by filenames: The archive must or may contain files as specified by the following file restrictions
+
+```xml
+   <tns:submission-restrictions>
+        <tns:archive-restrictions max-size="[size in bytes]" mime-type-regexp="[mimetype regexp]" unpack-files-from-archive="[true/false]">
+            <tns:file-restrictions>
+                <tns:required path="[full path to file]" mime-type-regexp="[mimetype regexp]" />
+                <tns:optional path="[full path to file]" mime-type-regexp="[mimetype regexp]"/>
+            </tns:file-restrictions>
+        </tns:archive-restrictions>
+    </tns:submission-restrictions>
+```
+
+- "required" the archive must contain a file with specified "path" (rooted at the archive root) and optional "mime-type-regexp". Otherwise the submission should be rejected.
+- "optional" the archive may contain a file with specified attributes
+
+####File restriction
+
+```xml
+<xs:complexType name="file-restr-type">
+	<xs:all>
+		<xs:element name="required" minOccurs="0" maxOccurs="1">
+			<xs:complexType>
+				<xs:attributeGroup ref="tns:mimetype-attr"/>
+				<xs:attributeGroup ref="tns:maxsize-attr"/>
+				<xs:attribute name="filename" use="required"/>
+			</xs:complexType>
+		</xs:element>
+		<xs:element name="optional" minOccurs="0" maxOccurs="1">
+			<xs:complexType>
+				<xs:attributeGroup ref="tns:mimetype-attr"/>
+				<xs:attributeGroup ref="tns:maxsize-attr"/>
+				<xs:attribute name="filename" use="required"/>
+			</xs:complexType>
+		</xs:element>
+	</xs:all>
+</xs:complexType>
+```
+A submission must or may consist of files as specified by the file restrictions. A submission should be rejected, if it does not match the restrictions.
+
+```xml
+   <tns:submission-restrictions>
+            <tns:file-restrictions>
+                <tns:required path="[full path to file]" mime-type-regexp="[mimetype regexp]" max-size="[size in bytes]"/>
+                <tns:optional path="[full path to file]" mime-type-regexp="[mimetype regexp]" max-size="[size in bytes]"/>
+            </tns:file-restrictions>
+    </tns:submission-restrictions>
+```
+
+- "required" the submission must have a file with specified "path" (rooted at the archive root). Otherwise the submission should be rejected.
+- "optional" the submission may have a file with specified attributes.
+
+####Regexp restriction
+```xml
+<xs:complexType name="file-regexp-restr-type">
+	<xs:simpleContent>
+		<xs:extension base="xs:string">
+			<xs:attributeGroup ref="tns:maxsize-attr"/>
+			<xs:attributeGroup ref="tns:mimetype-attr"/>
+		</xs:extension>
+	</xs:simpleContent>
+</xs:complexType>
+```
+
+A submission must consist of one or several files, where all file names must adhere to the regular expression.
+
+```xml
+   <tns:submission-restrictions>
+            <tns:regexp-restriction mime-type-regexp="[mimetype regexp]" max-size="[size in bytes]">regular expression</tns:regexp-restriction>
+    </tns:submission-restrictions>
+```
+
+- "regexp-restriction" holds a regular expression of the filenames (only the filename, without path) which the system should accept. Regular expressions can contain less than/greater than signs. CDATA is allowed.
+
+####Regexp language specification
+
+TODO!!!
 
 ###The files part
 
