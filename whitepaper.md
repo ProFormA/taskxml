@@ -5,13 +5,12 @@
 contributors listed in alphabetical order:
 
 
-Humboldt-Universität zu Berlin: Niels Pinkwart, Sven Strickroth
-Technische Universität Clausthal: Oliver Müller
-Universität Duisburg-Essen: Michael Striewe
-Hochschule Hannover: Sebastian Becker, Oliver J. Bott, Robert Garmann
-Universität Osnabrück: Helmar Gust, Nadine Werner
-Ostfalia Hochschule für Angewandte Wissenschaften: Stefan Bisitz, Stefan
-Dröschler, Nils Jensen, Uta Priss, Oliver Rod
+Humboldt-Universität zu Berlin: *Niels Pinkwart, Sven Strickroth*
+Technische Universität Clausthal: *Oliver Müller*
+Universität Duisburg-Essen: *Michael Striewe*
+Hochschule Hannover: *Sebastian Becker, Oliver J. Bott, Robert Garmann, Peter Werner*
+Universität Osnabrück: *Helmar Gust, Nadine Werner*
+Ostfalia Hochschule für Angewandte Wissenschaften: *Stefan Bisitz, Stefan Dröschler, Nils Jensen, Uta Priss, Oliver Rod*
 
 [TOC]
 
