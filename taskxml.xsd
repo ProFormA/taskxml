@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:proforma:task:v0.9.4" xmlns:tns="urn:proforma:task:v0.9.4" elementFormDefault="qualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:proforma:task:v1.0.0" xmlns:tns="urn:proforma:task:v1.0.0" elementFormDefault="qualified">
     <xs:element name="task">
         <xs:complexType>
             <xs:sequence>
@@ -50,11 +50,78 @@
     </xs:element>
 
     <xs:complexType name="submission-restrictions">
-        <xs:attribute name="max-size" type="xs:positiveInteger" use="optional"/>
-        <xs:attribute name="unpack-files-from-archive-regexp" type="xs:string" use="optional" default=".*"/>
-        <xs:attribute name="unpack-files-from-archive" type="xs:boolean" use="optional" default="false"/>
-        <xs:attribute name="allowed-upload-filename-regexp" type="xs:string" use="optional" default=".*"/>
+        <xs:choice>
+            <xs:element name="archive-restriction" type="tns:archive-restr-type"/>
+            <xs:element name="files-restriction" type="tns:file-restr-type"/>
+            <xs:element name="regexp-restriction" type="tns:file-regexp-restr-type"/>
+        </xs:choice>
     </xs:complexType>
+    
+    
+    <xs:complexType name="file-restr-type">
+        <xs:all>
+            <xs:element name="required" minOccurs="0" maxOccurs="1">
+                <xs:complexType> 
+                    <xs:attributeGroup ref="tns:mimetype-attr"/>
+                    <xs:attributeGroup ref="tns:maxsize-attr"/>
+                    <xs:attribute name="filename" use="required"/>   
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="optional" minOccurs="0" maxOccurs="1">
+                <xs:complexType> 
+                    <xs:attributeGroup ref="tns:mimetype-attr"/>
+                    <xs:attributeGroup ref="tns:maxsize-attr"/>
+                    <xs:attribute name="filename" use="required"/>   
+                </xs:complexType>
+            </xs:element>
+        </xs:all>     
+    </xs:complexType>
+    
+    <xs:complexType name="file-regexp-restr-type">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attributeGroup ref="tns:maxsize-attr"/>
+                <xs:attributeGroup ref="tns:mimetype-attr"/>
+            </xs:extension>
+        </xs:simpleContent>     
+    </xs:complexType>
+    
+    <xs:complexType name="archive-restr-type">
+        <xs:choice>
+            <xs:element name="unpack-files-from-archive-regexp" type="xs:string" maxOccurs="1" />
+            <xs:element name="file-restrictions">
+                <xs:complexType>
+                    <xs:choice maxOccurs="unbounded" minOccurs="0">                   
+                        <xs:element name="required" >
+                            <xs:complexType> 
+                                <xs:attributeGroup ref="tns:mimetype-attr"/>
+                                <xs:attribute name="path" use="required"/>   
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="optional" >
+                            <xs:complexType> 
+                                <xs:attributeGroup ref="tns:mimetype-attr"/>
+                                <xs:attribute name="path" use="required"/>   
+                            </xs:complexType>
+                        </xs:element>                     
+                    </xs:choice>
+                </xs:complexType>
+            </xs:element>
+        </xs:choice>
+        <xs:attributeGroup ref="tns:maxsize-attr"/>
+        <xs:attributeGroup ref="tns:mimetype-attr"/>
+        <xs:attributeGroup ref="tns:archive-attr"/>
+    </xs:complexType>
+    <xs:attributeGroup name="maxsize-attr">
+        <xs:attribute name="max-size" type="xs:positiveInteger" use="optional"/>
+    </xs:attributeGroup>
+    <xs:attributeGroup name="mimetype-attr">
+        <xs:attribute name="mime-type-regexp" type="xs:string" use="optional"/>
+    </xs:attributeGroup>
+    <xs:attributeGroup name="archive-attr">
+        <xs:attribute name="unpack-files-from-archive" type="xs:boolean" use="optional" default="false"/>
+        <xs:attribute name="allowed-archive-filename" type="xs:string" use="optional"/>
+    </xs:attributeGroup>
 
     <xs:complexType name="model-solutions">
         <xs:sequence maxOccurs="unbounded">

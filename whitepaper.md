@@ -1,17 +1,16 @@
 #An XML exchange format for (programming) tasks
 
-**Version 0.9.4**
+**Version 1.0.0**
 
 contributors listed in alphabetical order:
 
 
-Humboldt-Universität zu Berlin: Niels Pinkwart, Sven Strickroth
-Technische Universität Clausthal: Oliver Müller
-Universität Duisburg-Essen: Michael Striewe
-Hochschule Hannover: Sebastian Becker, Oliver J. Bott, Robert Garmann
-Universität Osnabrück: Helmar Gust, Nadine Werner
-Ostfalia Hochschule für Angewandte Wissenschaften: Stefan Bisitz, Stefan
-Dröschler, Nils Jensen, Uta Priss, Oliver Rod
+Humboldt-Universität zu Berlin: *Niels Pinkwart, Sven Strickroth*
+Technische Universität Clausthal: *Oliver Müller*
+Universität Duisburg-Essen: *Michael Striewe*
+Hochschule Hannover: *Sebastian Becker, Oliver J. Bott, Robert Garmann, Peter Werner*
+Universität Osnabrück: *Helmar Gust, Nadine Werner*
+Ostfalia Hochschule für Angewandte Wissenschaften: *Stefan Bisitz, Stefan Dröschler, Nils Jensen, Uta Priss, Oliver Rod*
 
 [TOC]
 
@@ -53,8 +52,8 @@ the XML document.
 
 The general structure of the XML format is given as follows (this is
 meant to provide an overview and does not represent a minimal document):
-
-    <tns:task lang="[LANG code]" xmlns:tns="urn:proforma:task:v0.9.4">
+```xml
+    <tns:task lang="[LANG code]" xmlns:tns="urn:proforma:task:v1.0.0">
         <tns:description></tns:description>
         <tns:proglang version=""></tns:proglang>
         <tns:submission-restrictions />
@@ -71,10 +70,11 @@ meant to provide an overview and does not represent a minimal document):
 
         <tns:meta-data />
     </tns:task>
-
+```
 
 The following code shows the XML Schema for the Task Format:
 
+```xml
     <xs:element name="task">
         <xs:complexType>
             <xs:sequence>
@@ -103,10 +103,11 @@ The following code shows the XML Schema for the Task Format:
              <xs:field xpath="@refid"/>
         </xs:keyref>
     </xs:element>
-
+```
+	
 The document root element “task” holds the XML-namespace URI for the
 current version number of the XML Task Format. The only currently valid
-value is “urn:proforma:task:v0.9.4”. The task itself must have an
+value is “urn:proforma:task:v1.0.0”. The task itself must have an
 attribute “lang” which specifies the natural language used. The
 description, title etc should be written in this language. The content
 of the “lang” attribute must comply with the IETF BCP 47, RFC 4647 and
@@ -114,13 +115,16 @@ ISO 639-1:2002 standards.
 
 ###The description part
 
+```xml
     <xs:element name="description" type="xs:string" />
+```
 
 An instance of this element contains the task description as text. A
 subset of HTML is allowed (see Appendix A).
 
 ###The proglang part
 
+```xml
     <xs:element name="proglang">
       <xs:complexType>
          <xs:simpleContent>
@@ -130,6 +134,7 @@ subset of HTML is allowed (see Appendix A).
          </xs:simpleContent>
       </xs:complexType>
     </xs:element>
+```
 
 An instance of this element contains the programming/modelling/query
 language to which this task applies. A valid list of values is specified
@@ -141,43 +146,181 @@ entered as a “point” separated list of up to four unsigned integers.
 
 ###The submission-restrictions part
 
-    <xs:element name="submission-restrictions">
-        <xs:complexType>
-            <xs:attribute name="max-size" type="xs:positiveInteger" use="optional"/>
-            <xs:attribute name="allowed-upload-filename-regexp" type="xs:string" use="optional" default=".*"/>
-            <xs:attribute name="unpack-files-from-archive" type="xs:boolean" use="optional" default="false"/>
-            <xs:attribute name="unpack-files-from-archive-regexp" type="xs:string" use="optional" default=".*"/>
-        </xs:complexType>
-    </xs:element>
+```xml
+<xs:complexType name="submission-restrictions">
+	<xs:choice>
+		<xs:element name="archive-restrictions" type="tns:archiverestr-type"/>
+		<xs:element name="files-restrictions" type="tns:file-restr-type"/>
+		<xs:element name="regexp-restrictions" type="tns:file-regexp-restr-type"/>
+	</xs:choice>
+</xs:complexType>
+```
 
 An instance of this element can specify restrictions for the upload of
-(solution) files - by default there are no restrictions. The possible
-restrictions can be entered into a set of four optional attributes:
-“max-size”, “allowed-upload-filename-regexp”,
-“unpack-files-from-archive”, and “unpack-files-from-archive-regexp”. A
-prefix of “\^” and a postfix of “\$” is implicitly assumed and must not
-be specified explicitly.
+(solution) files - by default there are no restrictions. There is a choose
+between three possible restrictions types. 
+- [archive-restriction](#archive-restriction) 
+- [file-restriction](#file-restriction) 
+- [regexp-restriction](#regexp-restriction)
 
--   “max-size” specifies the maximum size of a file in bytes which
-    should be accepted. Systems which have a stronger limit of the file
-    size should print a warning to the importing user. If this attribute
-    is missing, a system default value will be used. 
--   “allowed-upload-filename-regexp” holds a regular expression of the
-    filenames (only the filename, without path) which the system should
-    accept. 
--   "unpack-files-from-archive" specifies if uploaded archives (zip/jar)
-    should be unpacked automatically. If it is set to *false,* no
-    extraction takes place and the archive is used as it is. 
--   In case "unpack-files-from-archive" is set to *true,*
-    “unpack-files-from-archive-regexp” is honoured which holds a regular
-    expression that controls which files are automatically extracted
-    (the filename of the uploaded archive must of course match
-    “allowed-upload-filename-regexp”). Only matching files (the whole
-    path of the zip-items matches with “/” as path separator) are
-    extracted from the archive.
+All restriction types have two optional attributes
+
+-  “max-size” specifies the maximum size of a file in bytes which should be
+   accepted. Systems which have a stronger limit of the file size should print a
+   warning to the importing user. If this attribute is missing, a system default
+   value will be used.
+-  "mimetype-regexp" specifies the mimetype by regular expression of files the
+   system should accept (specified regexp language in [regexp-language-restriction]
+     (#regexp-language-specification))
+
+```xml
+<xs:attributeGroup name="maxsize-attr">
+	<xs:attribute name="max-size" type="xs:positiveInteger" use="optional"/>
+</xs:attributeGroup>
+<xs:attributeGroup name="mimetype-attr">
+	<xs:attribute name="mime-type-regexp" type="xs:string" use="optional"/>
+</xs:attributeGroup>
+```
+####Archive restriction
+
+```xml
+<xs:complexType name="archiverestr-type">
+	<xs:choice>
+		<xs:element name="unpack-files-from-archive-regexp" type="xs:string" maxOccurs="1"/>
+		<xs:element name="file-restrictions">
+			<xs:complexType>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="required">
+						<xs:complexType>
+							<xs:attributeGroup ref="tns:mimetype-attr"/>
+							<xs:attribute name="path" use="required"/>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="optional">
+						<xs:complexType>
+							<xs:attributeGroup ref="tns:mimetype-attr"/>
+							<xs:attribute name="path" use="required"/>
+						</xs:complexType>
+					</xs:element>
+				</xs:choice>
+			</xs:complexType>
+		</xs:element>
+	</xs:choice>
+	<xs:attributeGroup ref="tns:maxsize-attr"/>
+	<xs:attributeGroup ref="tns:mimetype-attr"/>
+	<xs:attributeGroup ref="tns:archive-attr"/>
+</xs:complexType>
+...
+<xs:attributeGroup name="archive-attr">
+	<xs:attribute name="unpack-files-from-archive" type="xs:boolean" use="optional" default="false"/>
+	<xs:attribute name="allowed-archive-filename" type="xs:string" use="optional"/>
+</xs:attributeGroup>
+```
+
+ - "unpack-files-from-archive" specifies if uploaded archives (zip/jar) should
+   be unpacked automatically. If it is set to *false,* no extraction takes place
+   and the archive is used as it is.
+ - the filename of the uploaded archive must match "allowed-archive-filename"
+ 
+There is a choice for handling the file restrictions.
+
+1. by regexp: The archive may contain many files. The regular expression specifies, which files will be extracted from the archive
+
+```xml
+   <tns:submission-restrictions>
+        <tns:archive-restrictions max-size="[size in bytes]" mime-type-regexp="[mimetype regexp]" unpack-files-from-archive="[true/false]">
+              <tns:unpack-files-from-archive-regexp>regular expression</tns:unpack-files-from-archive-regexp>
+        </tns:archive-restrictions>
+    </tns:submission-restrictions>
+``` 
+
+ -   “unpack-files-from-archive-regexp” holds a regular expression that
+     controls which files are automatically extracted. Only matching files (the
+     whole path of the zip-items matches with “/” as path separator) are
+     extracted from the archive (specified regexp language in [regexp-language-restriction]
+     (#regexp-language-specification)).
+ 
+2. by filenames: The archive must or may contain files as specified by the following file restrictions
+
+```xml
+   <tns:submission-restrictions>
+        <tns:archive-restrictions max-size="[size in bytes]" mime-type-regexp="[mimetype regexp]" unpack-files-from-archive="[true/false]">
+            <tns:file-restrictions>
+                <tns:required path="[full path to file]" mime-type-regexp="[mimetype regexp]" />
+                <tns:optional path="[full path to file]" mime-type-regexp="[mimetype regexp]"/>
+            </tns:file-restrictions>
+        </tns:archive-restrictions>
+    </tns:submission-restrictions>
+```
+
+- "required" the archive must contain a file with specified "path" (rooted at the archive root) and optional "mime-type-regexp". Otherwise the submission should be rejected.
+- "optional" the archive may contain a file with specified attributes
+
+####File restriction
+
+```xml
+<xs:complexType name="file-restr-type">
+	<xs:all>
+		<xs:element name="required" minOccurs="0" maxOccurs="1">
+			<xs:complexType>
+				<xs:attributeGroup ref="tns:mimetype-attr"/>
+				<xs:attributeGroup ref="tns:maxsize-attr"/>
+				<xs:attribute name="filename" use="required"/>
+			</xs:complexType>
+		</xs:element>
+		<xs:element name="optional" minOccurs="0" maxOccurs="1">
+			<xs:complexType>
+				<xs:attributeGroup ref="tns:mimetype-attr"/>
+				<xs:attributeGroup ref="tns:maxsize-attr"/>
+				<xs:attribute name="filename" use="required"/>
+			</xs:complexType>
+		</xs:element>
+	</xs:all>
+</xs:complexType>
+```
+A submission must or may consist of files as specified by the file restrictions. A submission should be rejected, if it does not match the restrictions.
+
+```xml
+   <tns:submission-restrictions>
+            <tns:file-restrictions>
+                <tns:required path="[full path to file]" mime-type-regexp="[mimetype regexp]" max-size="[size in bytes]"/>
+                <tns:optional path="[full path to file]" mime-type-regexp="[mimetype regexp]" max-size="[size in bytes]"/>
+            </tns:file-restrictions>
+    </tns:submission-restrictions>
+```
+
+- "required" the submission must have a file with specified "path" (rooted at the archive root). Otherwise the submission should be rejected.
+- "optional" the submission may have a file with specified attributes.
+
+####Regexp restriction
+```xml
+<xs:complexType name="file-regexp-restr-type">
+	<xs:simpleContent>
+		<xs:extension base="xs:string">
+			<xs:attributeGroup ref="tns:maxsize-attr"/>
+			<xs:attributeGroup ref="tns:mimetype-attr"/>
+		</xs:extension>
+	</xs:simpleContent>
+</xs:complexType>
+```
+
+A submission must consist of one or several files, where all file names must adhere to the regular expression.
+
+```xml
+   <tns:submission-restrictions>
+            <tns:regexp-restriction mime-type-regexp="[mimetype regexp]" max-size="[size in bytes]">regular expression</tns:regexp-restriction>
+    </tns:submission-restrictions>
+```
+
+- "regexp-restriction" holds a regular expression of the filenames (only the filename, without path) which the system should accept. Regular expressions can contain less than/greater than signs. CDATA is allowed.
+
+####Regexp language specification
+
+TODO!!!
 
 ###The files part
 
+```xml
     <xs:element name="files">
         <xs:complexType>
             <xs:sequence minOccurs="0" maxOccurs="unbounded">
@@ -189,6 +332,7 @@ be specified explicitly.
              <xs:field xpath="@id"/>
         </xs:key>
     </xs:element>
+```
 
 The files element contains 0 or more file elements. A file element is
 used to attach files to a task. Files can be external or embedded into
@@ -196,6 +340,7 @@ the XML file.
 
 ###The file element
 
+```xml
     <xs:element name="file">
       <xs:complexType>
          <xs:simpleContent>
@@ -227,6 +372,7 @@ the XML file.
          </xs:simpleContent>
       </xs:complexType>
     </xs:element>
+```
 
 The file element includes or links a single file to a task. Each
 instance/file must have a (task) unique string in its “id” attribute (in
@@ -266,6 +412,7 @@ archive (which can be different from the filename attribute).
 
 ###The external-resources part
 
+```xml
     <xs:element name="external-resources">
       <xs:complexType>
            <xs:sequence minOccurs="0" maxOccurs="unbounded">
@@ -277,12 +424,14 @@ archive (which can be different from the filename attribute).
            <xs:field xpath="@id"/>
       </xs:key>
     </xs:element>
+```
 
 The external-resources element contains 0 or more external-resource elements. An external-resource element is
 used to refer to a resource that is neither embedded nor directly attached to the task.
 
 ###The external-resource element
 
+```xml
     <xs:element name="external-resource">
       <xs:complexType>
            <xs:sequence>
@@ -293,7 +442,7 @@ used to refer to a resource that is neither embedded nor directly attached to th
            <xs:attribute name="reference" type="xs:string" use="optional"/>
       </xs:complexType>
     </xs:element>
-
+```
 
 Normally task files should be self-contained, but in rare cases the use of external resources is unavoidable for fulfilling or grading the task.  The external-resource element basically contains a reference to that kind of resources. In its simplest form, the resource is identified by an identifier contained in the “reference” attribute. More complicated references can be specified in child elements of any namespace.
 
@@ -308,6 +457,7 @@ A task that references at least one external resource is not "self-contained" an
 
 ###The model-solutions part
 
+```xml
     <xs:element name="model-solutions">
         <xs:complexType>
             <xs:sequence maxOccurs="unbounded">
@@ -315,12 +465,14 @@ A task that references at least one external resource is not "self-contained" an
             </xs:sequence>
         </xs:complexType>
     </xs:element>
+```
 
 The model solutions element is used to provide one or more solutions of
 the task. For each model-solution a new model-solution element is added.
 
 ###The model-solution element
 
+```xml
     <xs:element name="model-solution">
         <xs:complexType>
              <xs:sequence>
@@ -334,6 +486,7 @@ the task. For each model-solution a new model-solution element is added.
              <xs:field xpath="@id"/>
         </xs:unique>
     </xs:element>
+```
 
 The model-solution element links one single model-solution to a task. Each
 instance/solution must have a (task) unique string in its “id” attribute.
@@ -350,6 +503,7 @@ task. More specific information about the test XML is provided in the
 
 ###The grading-hints element###
 
+```xml
     <xs:element name="grading-hints">
         <xs:complexType>
          <xs:sequence>
@@ -357,6 +511,7 @@ task. More specific information about the test XML is provided in the
          </xs:sequence>
         </xs:complexType>
     </xs:element>
+```
 
 An instance of this element holds information on how the creator of the
 task intended the grading process. This element contains plain text or
@@ -366,6 +521,7 @@ to be exported and imported again from one system to another.
 
 ###The meta-data element
 
+```xml
     <xs:element name="meta-data">
         <xs:complexType>
          <xs:sequence>
@@ -374,6 +530,7 @@ to be exported and imported again from one system to another.
          </xs:sequence>
         </xs:complexType>
     </xs:element>
+```
 
 The meta-data element holds a namespace for the meta-data of each
 system. Because meta-data are already standardized in other systems, it
@@ -388,6 +545,7 @@ test-meta-data element.
 
 The general structure of the test description is given as follows:
 
+```xml
     <tns:tests>
         <tns:test id="unique ID" validity="">
             <tns:title></tns:title>
@@ -403,9 +561,11 @@ The general structure of the test description is given as follows:
             </tns:test-configuration>
         </tns:test>
     </tns:tests>
+```
 
 The corresponding XML schema for the test XML structure is:
 
+```xml
     <xs:element name="tests">
         <xs:complexType>
             <xs:sequence minOccurs="0" maxOccurs="unbounded">
@@ -417,9 +577,11 @@ The corresponding XML schema for the test XML structure is:
              <xs:field xpath="@id"/>
         </xs:unique>
     </xs:element>
+```
 
 ###The test element
 
+```xml
     <xs:element name="test">
         <xs:complexType>
             <xs:sequence>
@@ -440,6 +602,7 @@ The corresponding XML schema for the test XML structure is:
             <xs:attribute name="id" use="required" type="xs:string"/>
         </xs:complexType>
     </xs:element>
+```
 
 The test element has a required attribute “id” and an optional attribute
 “validity”. The optional attribute “validity” is used by some systems
@@ -447,7 +610,9 @@ The test element has a required attribute “id” and an optional attribute
 
 ###The title element
 
+```xml
     <xs:element name="title" type="xs:string"/>
+```
 
 The title element is used to provide a short and clear name for the test
 that can be displayed to students as part of their results. It should be
@@ -457,13 +622,16 @@ specified for the task itself.
 
 ###The test-type element
 
+```xml
     <xs:element name="test-type" type="xs:string"/>
+```
 
 Examples of values are: java-syntax, unittest. A list of allowed
 entries is specified in Appendix C.
 
 ###The test-configuration part
 
+```xml
     <xs:element name="test-configuration">
         <xs:complexType>
             <xs:sequence>
@@ -474,7 +642,8 @@ entries is specified in Appendix C.
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-
+```
+	
 The test-configuration contains all parameters which are needed for
 configuring this specific test. The test-configuration should either
 contain a files part or a code element which contains the actual code of
@@ -484,6 +653,7 @@ configuration options.
 
 ###The filerefs part
 
+```xml
     <xs:element name="filerefs">
         <xs:complexType>
             <xs:sequence maxOccurs="unbounded">
@@ -491,16 +661,19 @@ configuration options.
             </xs:sequence>
         </xs:complexType>
     </xs:element>
+```
 
 Several filerefs can be specified via fileref elements.
 
 ###The fileref element
 
+```xml
     <xs:element name="fileref">
         <xs:complexType>
             <xs:attribute name="refid" type="xs:string" use="required"/>
         </xs:complexType>
     </xs:element>
+```
 
 The fileref element links a single file to a test based on the ID of the
 file which has to be defined in task/files. The ID has to be entered as
@@ -508,6 +681,7 @@ the refid attribute.
 
 ###The externalresourcerefs part
 
+```xml
     <xs:element name="externalresourcerefs">
         <xs:complexType>
             <xs:sequence minOccurs="0" maxOccurs="unbounded">
@@ -515,16 +689,19 @@ the refid attribute.
             </xs:sequence>
         </xs:complexType>
     </xs:element>
+```
 
 Several externalresourcerefs can be specified via externalresourceref elements.
 
 ###The externalresourceref element
 
+```xml
     <xs:element name="externalresourceref">
         <xs:complexType>
             <xs:attribute name="refid" type="xs:string" use="required"/>
         </xs:complexType>
     </xs:element>
+```
 
 The externalresourceref element links a single external-resource to a test based on the ID of the
 external-resource which has to be defined in task/external-resources. The ID has to be entered as
@@ -532,6 +709,7 @@ the refid attribute.
 
 ###The test-meta-data element
 
+```xml
     <xs:element name="test-meta-data">
         <xs:complexType>
          <xs:sequence>
@@ -539,6 +717,7 @@ the refid attribute.
          </xs:sequence>
         </xs:complexType>
     </xs:element>
+```
 
 The test-meta-data element holds a namespace for test-specific meta-data
 of each system. This is particularly useful for attributes that are
