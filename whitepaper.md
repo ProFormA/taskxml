@@ -1,6 +1,6 @@
 #An XML exchange format for (programming) tasks
 
-**Version 1.0.0**
+**Version 1.0.1**
 
 contributors listed in alphabetical order:
 
@@ -53,7 +53,7 @@ the XML document.
 The general structure of the XML format is given as follows (this is
 meant to provide an overview and does not represent a minimal document):
 ```xml
-    <tns:task lang="[LANG code]" xmlns:tns="urn:proforma:task:v1.0.0">
+    <tns:task lang="[LANG code]" xmlns:tns="urn:proforma:task:v1.0.1">
         <tns:description></tns:description>
         <tns:proglang version=""></tns:proglang>
         <tns:submission-restrictions />
@@ -107,9 +107,20 @@ The following code shows the XML Schema for the Task Format:
 	
 The document root element “task” holds the XML-namespace URI for the
 current version number of the XML Task Format. The only currently valid
-value is “urn:proforma:task:v1.0.0”. The task itself must have an
-attribute “lang” which specifies the natural language used. The
-description, title etc should be written in this language. The content
+value is “urn:proforma:task:v1.0.1”.
+
+###Task attributes
+
+The task is identified by attribute "uuid", an automatic generated UUID 
+in Version 4 (see RFC 4122). There is no need for monitoring the uniqueness,
+ the chance of generating two UUIDs having the same value is about 6 x 10^-11.
+
+The optional attribute "parent-uuid" is used whenever a task is changed. It is
+an pointer to the original task-uuid. This is usefull to generate a version tree
+in a later progress.
+
+The task itself must have an attribute “lang” which specifies the natural language
+used. The description, title etc should be written in this language. The content
 of the “lang” attribute must comply with the IETF BCP 47, RFC 4647 and
 ISO 639-1:2002 standards.
 

@@ -1,50 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:proforma:task:v1.0.0" xmlns:tns="urn:proforma:task:v1.0.0" elementFormDefault="qualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:proforma:task:v1.0.1" xmlns:tns="urn:proforma:task:v1.0.1" elementFormDefault="qualified">
     <xs:element name="task">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="description" type="tns:description"/>
                 <xs:element name="proglang" type="tns:proglang"/>
                 <xs:element name="submission-restrictions" type="tns:submission-restrictions"/>
-                <xs:element name="files" type="tns:files">
-                    <xs:key name="fileid">
-                        <xs:selector xpath="tns:file"/>
-                        <xs:field xpath="@id"/>
-                    </xs:key>
-                </xs:element>
-                <xs:element name="external-resources" type="tns:external-resources" minOccurs="0">
-                    <xs:key name="external-resourceid">
-                        <xs:selector xpath="tns:external-resource"/>
-                        <xs:field xpath="@id"/>
-                    </xs:key>
-                </xs:element>
-                <xs:element name="model-solutions" type="tns:model-solutions">
-                    <xs:unique name="model-solutionid">
-                        <xs:selector xpath="tns:model-solution"/>
-                        <xs:field xpath="@id"/>
-                    </xs:unique>
-                </xs:element>
-                <xs:element name="tests" type="tns:tests">
-                    <xs:unique name="testids">
-                        <xs:selector xpath="tns:test"/>
-                        <xs:field xpath="@id"/>
-                    </xs:unique>
-                </xs:element>
+                <xs:element name="files" type="tns:files"/>
+                <xs:element name="external-resources" type="tns:external-resources" minOccurs="0"/>
+                <xs:element name="model-solutions" type="tns:model-solutions"/>
+                <xs:element name="tests" type="tns:tests"/>
                 <xs:element name="grading-hints" type="tns:grading-hints" minOccurs="0"/>
                 <xs:element name="meta-data" type="tns:meta-data"/>
             </xs:sequence>
-            <xs:attribute name="lang" type="xs:string" use="required"/>
+           <xs:attribute name="uuid" type="xs:string" use="required"/>
+           <xs:attribute name="parent-uuid" type="xs:string" use="optional"/>
+           <xs:attribute name="lang" type="xs:string" use="required"/>
         </xs:complexType>
-        <xs:keyref name="tests-filerefs-fileref" refer="tns:fileid">
-            <xs:selector xpath="tns:tests/tns:test/tns:test-configuration/tns:filerefs/tns:fileref"/>
+
+        <xs:key name="fileid">
+            <xs:selector xpath=".//tns:file"/>
+            <xs:field xpath="@id"/>
+        </xs:key>
+        <xs:key name="testids">
+            <xs:selector xpath=".//tns:test"/>
+            <xs:field xpath="@id"/>
+        </xs:key>
+        <xs:key name="model-solutionid">
+            <xs:selector xpath=".//tns:model-solution"/>
+            <xs:field xpath="@id"/>
+        </xs:key>
+        <xs:key name="external-resourceid">
+            <xs:selector xpath=".//tns:external-resource"/>
+            <xs:field xpath="@id"/>
+        </xs:key>
+        <xs:keyref name="modelsolutions-model-solution-filerefs-fileref" refer="tns:fileid">
+            <xs:selector xpath="tns:model-solutions/tns:model-solution/tns:filerefs/tns:fileref"/>
             <xs:field xpath="@refid"/>
         </xs:keyref>
         <xs:keyref name="tests-extresrefs-extresref" refer="tns:external-resourceid">
             <xs:selector xpath="tns:tests/tns:test/tns:test-configuration/tns:externalresourcerefs/tns:externalresourceref"/>
             <xs:field xpath="@refid"/>
         </xs:keyref>
-        <xs:keyref name="modelsolutions-model-solution-filerefs-fileref" refer="tns:fileid">
-            <xs:selector xpath="tns:model-solutions/tns:model-solution/tns:filerefs/tns:fileref"/>
+        <xs:keyref name="tests-filerefs-fileref" refer="tns:fileid">
+            <xs:selector xpath="tns:tests/tns:test/tns:test-configuration/tns:filerefs/tns:fileref"/>
             <xs:field xpath="@refid"/>
         </xs:keyref>
     </xs:element>
