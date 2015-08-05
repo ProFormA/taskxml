@@ -18,10 +18,10 @@
            <xs:attribute name="lang" type="xs:string" use="required"/>
         </xs:complexType>
 
-        <xs:key name="fileid">
+        <xs:unique name="fileid">
             <xs:selector xpath=".//tns:file"/>
             <xs:field xpath="@id"/>
-        </xs:key>
+        </xs:unique>
         <xs:key name="testids">
             <xs:selector xpath=".//tns:test"/>
             <xs:field xpath="@id"/>
