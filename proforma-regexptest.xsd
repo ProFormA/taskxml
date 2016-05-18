@@ -4,10 +4,11 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="main-class" type="xs:string" minOccurs="1"/>
-                <xs:element name="parameter" type="valuelist" minOccurs="0"/>
+                <xs:element name="parameter" type="valuelist" minOccurs="0">
                     <xs:simpleType name="valuelist">
                         <xs:list itemType="xs:string"/>
                     </xs:simpleType>
+                </xs:element>
                 <xs:element name="regexp" type="xs:string" minOccurs="1"/>
                 <xs:element name="timeout" minOccurs="0">
                     <xs:simpleType>
