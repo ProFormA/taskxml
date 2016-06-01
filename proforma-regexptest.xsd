@@ -3,7 +3,7 @@
     <xs:element name="regexptest">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="main-class" type="xs:string" minOccurs="1"/>
+                <xs:element name="filename" type="xs:string" minOccurs="1"/>
                 <xs:element name="parameter" type="valuelist" minOccurs="0">
                     <xs:simpleType name="valuelist">
                         <xs:list itemType="xs:string"/>
@@ -18,6 +18,8 @@
                     </xs:simpleType>
                 </xs:element>
             </xs:sequence>
+            <xs:attribute name="framework" type="xs:string" use="required"/>
+            <xs:attribute name="version" type="xs:string" use="required"/>
         </xs:complexType>
     </xs:element>
 </xs:schema>
