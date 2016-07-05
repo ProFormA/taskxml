@@ -3,7 +3,10 @@
     <xs:element name="regexptest">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="filename" type="xs:string"/>
+                <xs:choice>
+                    <xs:element name="filename" type="xs:string"/>
+                    <xs:element name="main-class" type="xs:string"/>
+                </xs:choice>
                 <xs:element name="parameter" minOccurs="0">
                     <xs:simpleType>
                         <xs:list itemType="xs:string"/>
