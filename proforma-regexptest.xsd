@@ -4,12 +4,12 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="filename" type="xs:string"/>
-                <xs:element name="parameter" type="valuelist" minOccurs="0">
-                    <xs:simpleType name="valuelist">
+                <xs:element name="parameter" minOccurs="0">
+                    <xs:simpleType>
                         <xs:list itemType="xs:string"/>
                     </xs:simpleType>
                 </xs:element>
-                <xs:element name="regexp" type="xs:string" minOccurs="1" maxOccurs="unbounded"/>
+                <xs:element name="regexp" type="xs:string" maxOccurs="unbounded"/>
                 <xs:element name="timeout" minOccurs="0">
                     <xs:simpleType>
                         <xs:restriction base="xs:positiveInteger">
