@@ -12,13 +12,15 @@
                         <xs:list itemType="xs:string"/>
                     </xs:simpleType>
                 </xs:element>
-                <xs:choice>
-                    <xs:sequence>
-                        <xs:element name="regexp-allow" type="xs:string" maxOccurs="unbounded"/>
-                        <xs:element name="regexp-disallow" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
-                    </xs:sequence>
-                    <xs:element name="regexp-disallow" type="xs:string" maxOccurs="unbounded"/>
-                </xs:choice>
+                <xs:element name="regexp" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension base="xs:string">
+                                <xs:attribute name="not-allowed-regexp" type="xs:boolean" default="false"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>       
                 <xs:element name="timeout" minOccurs="0">
                     <xs:simpleType>
                         <xs:restriction base="xs:positiveInteger">
