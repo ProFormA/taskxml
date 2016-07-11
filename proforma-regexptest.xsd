@@ -16,11 +16,15 @@
                     <xs:complexType>
                         <xs:simpleContent>
                             <xs:extension base="xs:string">
-                                <xs:attribute name="not-allowed-regexp" type="xs:boolean" default="false"/>
+                                <xs:attribute name="not-allowed" type="xs:boolean" default="false"/>
+                                <xs:attribute name="case-insensitive" default="false"/>
+                                <xs:attribute name="dotall" default="false"/>
+                                <xs:attribute name="multiline" default="false"/>
+                                <xs:attribute name="free-spacing" default="false"/>
                             </xs:extension>
                         </xs:simpleContent>
                     </xs:complexType>
-                </xs:element>       
+                </xs:element>
                 <xs:element name="timeout" minOccurs="0">
                     <xs:simpleType>
                         <xs:restriction base="xs:positiveInteger">
