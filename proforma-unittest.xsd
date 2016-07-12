@@ -6,9 +6,7 @@
                 <xs:element name="main-class" type="xs:string" minOccurs="1"/>
                 <xs:element name="timeout" minOccurs="0">
                     <xs:simpleType>
-                        <xs:restriction base="xs:positiveInteger">
-                            <xs:minInclusive value="1"/>
-                        </xs:restriction>
+                        <xs:restriction base="xs:positiveInteger"/>
                     </xs:simpleType>
                 </xs:element>
             </xs:sequence>
