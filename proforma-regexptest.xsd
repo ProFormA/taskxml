@@ -1,25 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="urn:proforma:tests:regexptest:v1" targetNamespace="urn:proforma:tests:regexptest:v1" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="urn:proforma:tests:regexptest:v0.9"
+    targetNamespace="urn:proforma:tests:regexptest:v0.9" elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
     <xs:element name="regexptest">
         <xs:complexType>
             <xs:sequence>
+                <!-- entry-point is a file or a main-class needed to start a program -->
                 <xs:element name="entry-point" type="xs:string"/>
+                <!-- parameter: optional list of command line arguments -->
                 <xs:element name="parameter" minOccurs="0">
                     <xs:simpleType>
                         <xs:list itemType="xs:string"/>
                     </xs:simpleType>
                 </xs:element>
-                <xs:element name="regexp" maxOccurs="unbounded">
+                <xs:element name="regular-expressions">
                     <xs:complexType>
-                        <xs:simpleContent>
-                            <xs:extension base="xs:string">
-                                <xs:attribute name="not-allowed" type="xs:boolean" default="false"/>
-                                <xs:attribute name="case-insensitive" default="false"/>
-                                <xs:attribute name="dotall" default="false"/>
-                                <xs:attribute name="multiline" default="false"/>
-                                <xs:attribute name="free-spacing" default="false"/>
-                            </xs:extension>
-                        </xs:simpleContent>
+                        <!-- choice means: regexp-allow OR regexp-disallow -->
+                        <xs:choice>
+                            <xs:sequence>
+                                <!-- regular expression for allowed program outputs -->
+                                <xs:element name="regexp-allow" type="ns1:regexpType" maxOccurs="unbounded"/>
+                                <!-- regular expression for not allowed program outputs -->
+                                <xs:element name="regexp-disallow" type="ns1:regexpType" minOccurs="0" maxOccurs="unbounded"/>
+                            </xs:sequence>
+                            <xs:element name="regexp-disallow" type="ns1:regexpType" maxOccurs="unbounded"/>
+                        </xs:choice>
                     </xs:complexType>
                 </xs:element>
                 <xs:element name="timeout" minOccurs="0">
@@ -30,4 +35,15 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
+
+    <xs:complexType name="regexpType">
+        <xs:attributeGroup ref="ns1:regexp-flags"/>
+    </xs:complexType>
+    <!-- attributes to define, which regexp-flags are applied to a specified regular expression -->
+    <xs:attributeGroup name="regexp-flags">
+        <xs:attribute name="case-insensitive" type="xs:boolean" default="false"/>
+        <xs:attribute name="dotall" type="xs:boolean" default="false"/>
+        <xs:attribute name="multiline" type="xs:boolean" default="false"/>
+        <xs:attribute name="free-spacing" type="xs:boolean" default="false"/>
+    </xs:attributeGroup>
 </xs:schema>
