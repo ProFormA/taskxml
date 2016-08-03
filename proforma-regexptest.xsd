@@ -27,11 +27,6 @@
                         </xs:choice>
                     </xs:complexType>
                 </xs:element>
-                <xs:element name="timeout" minOccurs="0">
-                    <xs:simpleType>
-                        <xs:restriction base="xs:positiveInteger"/>
-                    </xs:simpleType>
-                </xs:element>
             </xs:sequence>
         </xs:complexType>
     </xs:element>

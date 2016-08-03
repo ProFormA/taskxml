@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:proforma:task:v1.0.1" xmlns:tns="urn:proforma:task:v1.0.1" elementFormDefault="qualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:proforma:task:v1.0.2" xmlns:tns="urn:proforma:task:v1.0.1" elementFormDefault="qualified">
     <xs:element name="task">
         <xs:complexType>
             <xs:sequence>
@@ -229,6 +229,11 @@
     <xs:complexType name="test-configuration">
         <xs:sequence>
             <xs:element name="filerefs" type="tns:filerefs" minOccurs="0"/>
+            <xs:element name="timeout" minOccurs="0">
+                <xs:simpleType>
+                    <xs:restriction base="xs:positiveInteger"/>
+                </xs:simpleType>
+            </xs:element>
             <xs:element name="externalresourcerefs" type="tns:externalresourcerefs" minOccurs="0"/>
             <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
             <xs:element name="test-meta-data" type="tns:test-meta-data" minOccurs="0"/>

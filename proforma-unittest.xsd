@@ -1,14 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="urn:proforma:tests:unittest:v1" targetNamespace="urn:proforma:tests:unittest:v1" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="urn:proforma:tests:unittest:v1" targetNamespace="urn:proforma:tests:unittest:v1.1" elementFormDefault="qualified" attributeFormDefault="unqualified">
     <xs:element name="unittest">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="main-class" type="xs:string" minOccurs="1"/>
-                <xs:element name="timeout" minOccurs="0">
-                    <xs:simpleType>
-                        <xs:restriction base="xs:positiveInteger"/>
-                    </xs:simpleType>
-                </xs:element>
             </xs:sequence>
             <xs:attribute name="framework" type="xs:string" use="required"/>
             <xs:attribute name="version" type="xs:string" use="required"/>
