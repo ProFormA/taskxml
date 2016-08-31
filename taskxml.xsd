@@ -55,36 +55,35 @@
             <xs:element name="regexp-restriction" type="tns:file-regexp-restr-type"/>
         </xs:choice>
     </xs:complexType>
-    
-    
+
     <xs:complexType name="file-restr-type">
         <xs:choice minOccurs="1" maxOccurs="unbounded">
             <xs:element name="required">
-                <xs:complexType> 
+                <xs:complexType>
                     <xs:attributeGroup ref="tns:mimetype-attr"/>
                     <xs:attributeGroup ref="tns:maxsize-attr"/>
-                    <xs:attribute name="filename" use="required"/>   
+                    <xs:attribute name="filename" use="required"/>
                 </xs:complexType>
             </xs:element>
             <xs:element name="optional">
-                <xs:complexType> 
+                <xs:complexType>
                     <xs:attributeGroup ref="tns:mimetype-attr"/>
                     <xs:attributeGroup ref="tns:maxsize-attr"/>
-                    <xs:attribute name="filename" use="required"/>   
+                    <xs:attribute name="filename" use="required"/>
                 </xs:complexType>
             </xs:element>
         </xs:choice>
     </xs:complexType>
-    
+
     <xs:complexType name="file-regexp-restr-type">
         <xs:simpleContent>
             <xs:extension base="xs:string">
                 <xs:attributeGroup ref="tns:maxsize-attr"/>
                 <xs:attributeGroup ref="tns:mimetype-attr"/>
             </xs:extension>
-        </xs:simpleContent>     
+        </xs:simpleContent>
     </xs:complexType>
-    
+
     <xs:complexType name="archive-restr-type">
         <xs:choice>
             <xs:element name="unpack-files-from-archive-regexp" type="xs:string"/>
@@ -92,17 +91,17 @@
                 <xs:complexType>
                     <xs:choice minOccurs="1" maxOccurs="unbounded">
                         <xs:element name="required" >
-                            <xs:complexType> 
+                            <xs:complexType>
                                 <xs:attributeGroup ref="tns:mimetype-attr"/>
-                                <xs:attribute name="path" use="required"/>   
+                                <xs:attribute name="path" use="required"/>
                             </xs:complexType>
                         </xs:element>
                         <xs:element name="optional" >
-                            <xs:complexType> 
+                            <xs:complexType>
                                 <xs:attributeGroup ref="tns:mimetype-attr"/>
-                                <xs:attribute name="path" use="required"/>   
+                                <xs:attribute name="path" use="required"/>
                             </xs:complexType>
-                        </xs:element>                     
+                        </xs:element>
                     </xs:choice>
                 </xs:complexType>
             </xs:element>
