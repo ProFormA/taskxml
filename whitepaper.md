@@ -1,4 +1,4 @@
-#An XML exchange format for (programming) tasks
+# An XML exchange format for (programming) tasks
 
 **Version 1.0.1**
 
@@ -14,7 +14,7 @@ Ostfalia Hochschule für Angewandte Wissenschaften: *Stefan Bisitz, Stefan Drös
 
 [TOC]
 
-##Introduction
+## Introduction
 
 This document specifies syntax and semantics for a standardized “Task
 Format” - an exchange format for programming exercises/tasks. It
@@ -28,7 +28,7 @@ included in the eCULT project “ProFormA”. The latest version of this
 document and the corresponding XML Schema can be found at this address:
 https://github.com/ProFormA/taskxml/
 
-##General Structure
+## General Structure
 
 The XML exchange format consists of two parts: The first section shows
 the description/specification of a task, including supporting files; and
@@ -36,7 +36,7 @@ the second section demonstrates a specification of tests which are to be
 included in the specification of a task under the \<tests\> tag. Each
 task can have many tests.
 
-##Format specification
+## Format specification
 
 The XML file can be exchanged as a standalone file. However, if it
 refers to several files, it is recommended to combine the XML file and
@@ -46,9 +46,9 @@ be found by tools supporting this format. The XML file should be well
 formed and encoded in UTF-8 (RFC 3629). ID’s are globally unique within
 the XML document.
 
-##Task section
+## Task section
 
-###XML Specification
+### XML Specification
 
 The general structure of the XML format is given as follows (this is
 meant to provide an overview and does not represent a minimal document):
@@ -109,7 +109,7 @@ The document root element “task” holds the XML-namespace URI for the
 current version number of the XML Task Format. The only currently valid
 value is “urn:proforma:task:v1.0.1”.
 
-###Task attributes
+### Task attributes
 
 The task is identified by attribute "uuid", an automatic generated UUID 
 in Version 4 (see RFC 4122). There is no need for monitoring the uniqueness,
@@ -124,7 +124,7 @@ used. The description, title etc should be written in this language. The content
 of the “lang” attribute must comply with the IETF BCP 47, RFC 4647 and
 ISO 639-1:2002 standards.
 
-###The description part
+### The description part
 
 ```xml
     <xs:element name="description" type="xs:string" />
@@ -133,7 +133,7 @@ ISO 639-1:2002 standards.
 An instance of this element contains the task description as text. A
 subset of HTML is allowed (see Appendix A).
 
-###The proglang part
+### The proglang part
 
 ```xml
     <xs:element name="proglang">
@@ -155,7 +155,7 @@ to work with that version – any other requirements about version
 compatibility must be checked externally.)  The “version” must be
 entered as a “point” separated list of up to four unsigned integers.
 
-###The submission-restrictions part
+### The submission-restrictions part
 
 ```xml
 <xs:complexType name="submission-restrictions">
@@ -192,7 +192,7 @@ All restriction types have two optional attributes
 	<xs:attribute name="mime-type-regexp" type="xs:string" use="optional"/>
 </xs:attributeGroup>
 ```
-####Archive restriction
+#### Archive restriction
 
 ```xml
 <xs:complexType name="archiverestr-type">
@@ -267,7 +267,7 @@ There is a choice for handling the file restrictions.
 - "required" the archive must contain a file with specified "path" (rooted at the archive root) and optional "mime-type-regexp". Otherwise the submission should be rejected.
 - "optional" the archive may contain a file with specified attributes
 
-####File restriction
+#### File restriction
 
 ```xml
 <xs:complexType name="file-restr-type">
@@ -303,7 +303,7 @@ A submission must or may consist of files as specified by the file restrictions.
 - "required" the submission must have a file with specified "path" (rooted at the archive root). Otherwise the submission should be rejected.
 - "optional" the submission may have a file with specified attributes.
 
-####Regexp restriction
+#### Regexp restriction
 ```xml
 <xs:complexType name="file-regexp-restr-type">
 	<xs:simpleContent>
@@ -325,11 +325,11 @@ A submission must consist of one or several files, where all file names must adh
 
 - "regexp-restriction" holds a regular expression of the filenames (only the filename, without path) which the system should accept. Regular expressions can contain less than/greater than signs. CDATA is allowed.
 
-####Regexp language specification
+#### Regexp language specification
 
 TODO!!!
 
-###The files part
+### The files part
 
 ```xml
     <xs:element name="files">
@@ -349,7 +349,7 @@ The files element contains 0 or more file elements. A file element is
 used to attach files to a task. Files can be external or embedded into
 the XML file.
 
-###The file element
+### The file element
 
 ```xml
     <xs:element name="file">
@@ -421,7 +421,7 @@ archive (which can be different from the filename attribute).
 
 
 
-###The external-resources part
+### The external-resources part
 
 ```xml
     <xs:element name="external-resources">
@@ -440,7 +440,7 @@ archive (which can be different from the filename attribute).
 The external-resources element contains 0 or more external-resource elements. An external-resource element is
 used to refer to a resource that is neither embedded nor directly attached to the task.
 
-###The external-resource element
+### The external-resource element
 
 ```xml
     <xs:element name="external-resource">
@@ -466,7 +466,7 @@ Each external resource element can be identified by its mandatory “id” attri
 A task that references at least one external resource is not "self-contained" anymore. The author of the task should take care that the referenced resources are publicly available. Otherwise the task won't be reusable in other than the author's application context.
 
 
-###The model-solutions part
+### The model-solutions part
 
 ```xml
     <xs:element name="model-solutions">
@@ -481,7 +481,7 @@ A task that references at least one external resource is not "self-contained" an
 The model solutions element is used to provide one or more solutions of
 the task. For each model-solution a new model-solution element is added.
 
-###The model-solution element
+### The model-solution element
 
 ```xml
     <xs:element name="model-solution">
@@ -506,13 +506,13 @@ The optional attribute “comment” can be used for additional
 information, for example if more than one model solution is provided it
 can be explained why there are several solutions.
 
-###The tests part
+### The tests part
 
 The tests element is used to provide automatic checks and tests for the
 task. More specific information about the test XML is provided in the
 [second section](#test-section) of this paper.
 
-###The grading-hints element###
+### The grading-hints element
 
 ```xml
     <xs:element name="grading-hints">
@@ -530,7 +530,7 @@ arbitrary elements in different namespaces. This field is mainly
 intended to support an exchange of grading ideas and also to allow tasks
 to be exported and imported again from one system to another.
 
-###The meta-data element
+### The meta-data element
 
 ```xml
     <xs:element name="meta-data">
@@ -550,9 +550,9 @@ meta-data relevant for the whole task should be entered here. Meta-data
 that is specific to an individual test should be entered in the
 test-meta-data element.
 
-##Test section
+## Test section
 
-###XML Specification
+### XML Specification
 
 The general structure of the test description is given as follows:
 
@@ -590,7 +590,7 @@ The corresponding XML schema for the test XML structure is:
     </xs:element>
 ```
 
-###The test element
+### The test element
 
 ```xml
     <xs:element name="test">
@@ -619,7 +619,7 @@ The test element has a required attribute “id” and an optional attribute
 “validity”. The optional attribute “validity” is used by some systems
 (such as Vips) for tests which only partially verify the solution code.
 
-###The title element
+### The title element
 
 ```xml
     <xs:element name="title" type="xs:string"/>
@@ -631,7 +631,7 @@ noted that the title does not have a language attribute because it is
 assumed that the title is written in the same natural language as
 specified for the task itself.
 
-###The test-type element
+### The test-type element
 
 ```xml
     <xs:element name="test-type" type="xs:string"/>
@@ -640,7 +640,7 @@ specified for the task itself.
 Examples of values are: java-syntax, unittest. A list of allowed
 entries is specified in Appendix C.
 
-###The test-configuration part
+### The test-configuration part
 
 ```xml
     <xs:element name="test-configuration">
@@ -662,7 +662,7 @@ the test. It has sub-elements which are required, however, each test can
 also have elements of its own namespace for test-type specific
 configuration options.
 
-###The filerefs part
+### The filerefs part
 
 ```xml
     <xs:element name="filerefs">
@@ -676,7 +676,7 @@ configuration options.
 
 Several filerefs can be specified via fileref elements.
 
-###The fileref element
+### The fileref element
 
 ```xml
     <xs:element name="fileref">
@@ -690,7 +690,7 @@ The fileref element links a single file to a test based on the ID of the
 file which has to be defined in task/files. The ID has to be entered as
 the refid attribute.
 
-###The externalresourcerefs part
+### The externalresourcerefs part
 
 ```xml
     <xs:element name="externalresourcerefs">
@@ -704,7 +704,7 @@ the refid attribute.
 
 Several externalresourcerefs can be specified via externalresourceref elements.
 
-###The externalresourceref element
+### The externalresourceref element
 
 ```xml
     <xs:element name="externalresourceref">
@@ -718,7 +718,7 @@ The externalresourceref element links a single external-resource to a test based
 external-resource which has to be defined in task/external-resources. The ID has to be entered as
 the refid attribute.
 
-###The test-meta-data element
+### The test-meta-data element
 
 ```xml
     <xs:element name="test-meta-data">
@@ -735,7 +735,7 @@ of each system. This is particularly useful for attributes that are
 required for ex- and import in one system but which are not relevant for
 other systems.
 
-##Appendix A: Subset of HTML
+## Appendix A: Subset of HTML
 
 <\!\-\- … \-\-\>, a, b, blockquote, br, p, sup, sub, center, div, dl, dd,
 dt, em, font, h1, h2, h3, h4, h5, h6, hr, img, li, ol, strong, pre,
@@ -746,13 +746,13 @@ li, ol, hr, strong, pre, span, table, tbody, td, tr, th, tt and ul there
 are no attributes allowed in order to avoid problems with different
 layouts.
 
-##Appendix B: List of programming languages
+## Appendix B: List of programming languages
 
 -   java
 -   SQL
 -   prolog
 
-##Appendix C: List of test types
+## Appendix C: List of test types
 
 -   java-compilation
 -   java-checkstyle
