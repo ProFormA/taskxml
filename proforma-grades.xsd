@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+           targetNamespace="urn:proforma:grades:v0.7" 
+           xmlns:tns="urn:proforma:grades:v0.7" 
+           elementFormDefault="qualified">
+  
+  <xs:element name="grading-hints">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="root" type="tns:node-type"/>
+        <xs:element name="combine" type="tns:node-type" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:complexType name="node-type">
+    <xs:sequence>
+      <xs:element name="displaytitle" type="xs:string" minOccurs="0"/>
+      <xs:element name="description" type="tns:description-type" minOccurs="0"/>
+      <xs:element name="internal-description" type="tns:description-type" minOccurs="0"/>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="test-ref" type="tns:child-type"/>
+        <xs:element name="combine-ref" type="tns:child-type"/>
+        <xs:element name="double-value-ref" type="tns:child-type"/>
+      </xs:choice>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:string" use="optional"/>
+    <xs:attribute name="function" use="optional">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="min"/>
+          <xs:enumeration value="avg"/>
+          <xs:enumeration value="sum"/>
+          <xs:enumeration value="max"/>
+          <xs:enumeration value="mult"/>
+          <xs:enumeration value="thres"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+  
+  <xs:complexType name="child-type">
+    <xs:attribute name="ref" type="xs:string" use="required"/>
+    <xs:attribute name="weight" type="xs:double" use="optional" />
+    <xs:attribute name="nature" use="optional">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="tree"/>
+          <xs:enumeration value="cross"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+  
+  <xs:simpleType name="description-type">
+    <xs:restriction base="xs:string"/>
+  </xs:simpleType>
+  
+</xs:schema>
