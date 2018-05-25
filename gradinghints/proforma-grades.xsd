@@ -100,19 +100,19 @@
             <xs:choice minOccurs="0">
                 <xs:element name="nullify-conditions" type="tns:grades-nullify-conditions-type">
                     <xs:annotation>
-                        <xs:documentation xml:lang="en">Specifies a _composite_ condition when the sub result of the pointed-at node should get nullified. The pointed-at node is a test or a combine node. When calculating the condensed result for this node (this = the node sourcing the pointer), the score of the pointed-at node is assumed 0, if the composite condition is true.</xs:documentation>
+                        <xs:documentation xml:lang="en">Specifies a composite condition when the sub result of the pointed-at node should get nullified. The pointed-at node is a test or a combine node. If the composite condition evaluates to False, it has no effect. Otherwise, the score of the pointed-at node is not accumulated into the condensed result of the pointing-from-node. State differently, the score that flows into the accumulator function of the pointing-from-node, is assumed to be emitted as 0 from the pointed-at node.</xs:documentation>
                     </xs:annotation>
                 </xs:element>
                 <xs:element name="nullify-condition" type="tns:grades-nullify-condition-type">
                     <xs:annotation>
-                        <xs:documentation xml:lang="en">Specifies a _comparison_ condition when the sub result of the pointed-at node should get nullified. The only difference to &lt;nullify-conditions&gt; is the trailing "s" and the fact, that &lt;nullify-conditions&gt; represents a compositecondition while &lt;nullify-condition&gt; represents simple comparisoncondition.</xs:documentation>
+                        <xs:documentation xml:lang="en">Specifies a _comparison_ condition when the sub result of the pointed-at node should get nullified. The only difference to &lt;nullify-conditions&gt; is the trailing "s" and the fact, that &lt;nullify-conditions&gt; represents a composite condition while &lt;nullify-condition&gt; represents a simple comparison condition.</xs:documentation>
                     </xs:annotation>
                 </xs:element>
             </xs:choice>
         </xs:sequence>
         <xs:attribute name="weight" type="xs:double" use="optional" >
             <xs:annotation>
-                <xs:documentation xml:lang="en">Specifies a weight that is multiplied to the sub result of the pointed-at node. The pointed-at node is a test or a combine node. When calculating the condensed result for this node (this = the node sourcing the pointer), the score of the pointed-at node is multiplied by the weight, if present. Otherwise nothing is multiplied. A special case is together with the function _avg_ where possibly attributed weights are completely ignored.</xs:documentation>
+                <xs:documentation xml:lang="en">Specifies a weight that is multiplied to the sub result of the pointed-at node when flowing into the accumulator function. The pointed-at node is a test or a combine node. When calculating the condensed result for the pointing-from node, the score of the pointed-at node is multiplied by the weight, if present. Otherwise nothing is multiplied. A special case is together with the accumulator function "avg" where possibly attributed weights are completely ignored.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
@@ -213,7 +213,7 @@
     </xs:complexType>
     <xs:complexType name="grades-nullify-condition-type">
         <xs:annotation>
-            <xs:documentation xml:lang="en">Specifies a simple comparison condition when the sub result of a pointed-at node should get nullified. This simple comparison condition is attributed with one of the six common comparison operators. Further it contains operands that refer to tests, combine nodes are that specify a numerical constant, which a result should be compared to.</xs:documentation>
+            <xs:documentation xml:lang="en">Specifies a simple comparison condition when the sub result of a pointed-at node should get nullified. This simple comparison condition is attributed with one of the six common comparison operators. Further it contains operands that refer to tests or combine nodes or that specify a numerical constant, which a result should be compared to.</xs:documentation>
         </xs:annotation>
         <xs:sequence>
             <xs:element name="displaytitle" type="xs:string" minOccurs="0">

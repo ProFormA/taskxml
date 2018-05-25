@@ -497,7 +497,7 @@ There are some basic elements that are repeated at various places in the XML sch
 
 A not too long title to be shown above e. g. a grading result. All displaytitle elements in this XML schema are optional. If a displaytitle is given, where a referenced element also has a title, the \<displaytitle\> content overrides the referenced title.
 
-The displaytitle is plain text without formatting.
+The displaytitle is plain text without formatting. White space in the title will be rendered as with CSS2 style ``white-space:normal``, i. e. sequences of white space are collapsed and lines get broken as necessary to fill line boxes.
 
 ##### description and internal-description elements
 
@@ -512,9 +512,9 @@ The displaytitle is plain text without formatting.
 
 An instance of this element contains a description as text. A subset of HTML is allowed (see Appendix A). If a description is given, where a referenced element also has a description, the \<description\> content overrides the referenced description.
 
-Descriptions can be given to problemaspects and nullify conditions.
+Descriptions can be given to problem aspects and to nullify conditions (see below).
 
-Internal descriptions are meant for teachers and maybe grading assistants. Internal descriptions are not shown to students. Internal description could include didactic background information and possibly technical or organizational details about the described artifact.
+Internal descriptions are meant for teachers and maybe grading assistants. Internal descriptions are not shown to students. Internal descriptions could include didactic background information and possibly technical or organizational details about the described artifact.
 
 
 #### grading-hints element
@@ -522,10 +522,10 @@ Internal descriptions are meant for teachers and maybe grading assistants. Inter
 The XML schema of the grading-hints element starts with the root element \<grading-hints\>. The respective section of the XML schema definition (xsd) is:
 
     <xs:element name="grading-hints" type="tns:grading-hints-type">
-        ... keys omitted from this discussion ...
+        ... keys omitted from this documentation ...
     </xs:element>
 
-The <\grading-hints\> element includes the complete hierarchical grading scheme with all tests references, weights, accumulating functions and nullify conditions. Hierarchy nodes and conditions can get a title and descriptions. All information below this element except the root node is optional. Grader-specific hints from other XML namespaces can be included in xs:any elements.
+The \<grading-hints\> element includes the complete hierarchical grading scheme with all tests references, weights, accumulating functions and nullify conditions. Hierarchy nodes and conditions can get a displaytitle and descriptions. All information below this element except the root node is optional. Grader-specific hints from other XML namespaces can be included in xs:any elements.
 
 
 
@@ -547,7 +547,7 @@ The grading-hints-type consist of the following elements
 
   - **combine**
 
-    The [\<combine\>](#root-and-combine---elements-of-the-grades-node-type) element ist an inner node of the grading scheme hierarchy, that is either a immediate child of the root node or any descendant node. A \<combine\> node specifies how to condense several sub results. Sub results can be test results or again "combined" results.
+    The [\<combine\>](#root-and-combine---elements-of-the-grades-node-type) element ist an inner node of the grading scheme hierarchy, that is either an immediate child of the root node or any descendant node. A \<combine\> node specifies how to condense several sub results. Sub results can be test results or again "combined" results.
 
   - **##other**
   
@@ -556,7 +556,7 @@ The grading-hints-type consist of the following elements
 
 #### root and combine - elements of the grades-node-type
 
-The above \<root\> and <\combine\> elements both are of the following grades-node-type:
+The above \<root\> and \<combine\> elements both are of the following grades-node-type:
 
     <xs:complexType name="grades-node-type">
         <xs:sequence>
@@ -599,7 +599,7 @@ The grades-node-type represents an inner node of the grading scheme hierarchy. T
    
  - **test-ref**
  
-   A [\<test-ref\>](#test-ref-and-combine-ref---elements-of-the-grades-base-ref-child-type) points to the ``id`` attribute if a \<test\> element in a ProFormA task. As such the result of the pointed at test is obtained and included in a bottom-up fashion in the calculation of the total result.
+   A [\<test-ref\>](#test-ref-and-combine-ref---elements-of-the-grades-base-ref-child-type) points to the ``id`` attribute of a \<test\> element in a ProFormA task. As such the result of the pointed at test is obtained and included in a bottom-up fashion in the calculation of the total result.
    
  - **combine-ref**
  
@@ -614,7 +614,7 @@ The grades-node-type represents an inner node of the grading scheme hierarchy. T
    
  - **function**
  
-   Accumulator function that is used to condense several sub results to a single result. Currently there are four functions:
+   Accumulator function that is used to condense several sub results to a single result. Currently there are four functions to choose from:
    
    * **min**
      
@@ -630,7 +630,7 @@ The grades-node-type represents an inner node of the grading scheme hierarchy. T
      
    - **avg**
    
-     Specifies the average of several sub scores. This is the special case of a sum with equal weights for every child while all weights add up to 1. Child nodes of an "avg"-node should not get any weights because in that case weights are ignored.
+     Specifies the arithmetic mean of several sub scores. This is the special case of a sum with equal weights for every child while all weights add up to 1. Child nodes of an "avg"-node should not get any weights because in that case weights are ignored.
      
      
 #### test-ref and combine-ref - elements of the grades-base-ref-child-type
@@ -675,17 +675,17 @@ We first discuss the common elements of both kinds of pointers.
 
  - **nullify-conditions**
  
-   Specifies a [composite condition](#nullify-conditions) when the sub result of the pointed-at node should get nullified. The pointed-at node is a test or a combine node. When calculating the condensed result for this node (this = the node sourcing the pointer), the score of the pointed-at node is assumed 0, if the composite condition is true.
+   Specifies a [composite condition](#nullify-conditions) when the sub result of the pointed-at node should get nullified. The pointed-at node is a test or a combine node. If the composite condition evaluates to False, it has no effect. Otherwise, the score of the pointed-at node is _not_ accumulated into the condensed result of the pointing-from-node. State differently, the score that flows into the accumulator function of the pointing-from-node, is assumed to be emitted as 0 from the pointed-at node.
    
  - **nullify-condition**
  
-   Specifies a [_comparison_ condition](#nullify-condition-without-s) when the sub result of the pointed-at node should get nullified. The only difference to \<nullify-conditions\> is the trailing "s" and the fact, that \<nullify-conditions\> represents a compositecondition while \<nullify-condition\> represents simple comparisoncondition.
+   Specifies a [_comparison_ condition](#nullify-condition-without-s) when the sub result of the pointed-at node should get nullified. The only difference to \<nullify-conditions\> is the trailing "s" and the fact, that \<nullify-conditions\> represents a composite condition while \<nullify-condition\> represents a simple comparison condition.
    
 ##### Attributes of grades-base-ref-child-type common to "test-ref" pointers and "combine-ref" pointers
 
  - **weight**
  
-   Specifies a weight that is multiplied to the sub result of the pointed-at node. The pointed-at node is a test or a combine node. When calculating the condensed result for this node (this = the node sourcing the pointer), the score of the pointed-at node is multiplied by the weight, if present. Otherwise nothing is multiplied. A special case is together with the function _avg_ where possibly attributed weights are completely ignored.
+   Specifies a weight that is multiplied to the sub result of the pointed-at node when flowing into the accumulator function. The pointed-at node is a test or a combine node. When calculating the condensed result for the pointing-from node, the score of the pointed-at node is multiplied by the weight, if present. Otherwise nothing is multiplied. A special case is together with the accumulator function _avg_ where possibly attributed weights are completely ignored.
 
  - **weight**
  
@@ -784,7 +784,7 @@ A \<nullify-conditions\> element specifies a composite condition when the sub re
 
 #### nullify-condition (without s)
 
-Specifies a simple comparison condition when the sub result of a pointed-at node should get nullified. This simple comparison condition is [attributed with one of the six common comparison operators](#attributes-of-the-nullify-condition-element). Further it contains operands that refer to [tests](#the-nullify-test-ref-element), [combine nodes](#the-nullify-combine-ref-element) are that specify a [numerical constant](#the-nullify-literal-element), which a result should be compared to.
+Specifies a simple comparison condition when the sub result of a pointed-at node should get nullified. This simple comparison condition is [attributed with one of the six common comparison operators](#attributes-of-the-nullify-condition-element). Further it contains operands that refer to [tests](#the-nullify-test-ref-element) or [combine nodes](#the-nullify-combine-ref-element) or that specify a [numerical constant](#the-nullify-literal-element), which a result should be compared to.
 
     <xs:complexType name="grades-nullify-condition-type">
         <xs:sequence>
