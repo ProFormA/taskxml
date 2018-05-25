@@ -2,17 +2,55 @@
 
 **Version 0.8**
 
-[TOC]
+ProFormA programming tasks can be assigned a grading scheme with the so-called *grading-hints*. This chapter describes simple and complex grading scheme examples and the XML schema for grading-hints.
 
+
+### Table of contents
+
+- ["Grading hints" - hinting a grader when scoring submissions](#-grading-hints----hinting-a-grader-when-scoring-submissions)
+  * [TODOs](#todos)
+  * [Examples](#examples)
+    + [Introducing a simple example](#introducing-a-simple-example)
+    + [Weighted sub results](#weighted-sub-results)
+    + [A hierarchy of sub results](#a-hierarchy-of-sub-results)
+    + [Conditionally nullify scores](#conditionally-nullify-scores)
+    + [Referencing tests and sub tests](#referencing-tests-and-sub-tests)
+    + [Combining sub tests and nullify conditions](#combining-sub-tests-and-nullify-conditions)
+    + [Last: a very simple example](#last--a-very-simple-example)
+  * [XML schema](#xml-schema)
+    + [Common elements](#common-elements)
+      - [displaytitle element](#displaytitle-element)
+      - [description and internal-description elements](#description-and-internal-description-elements)
+    + [grading-hints element](#grading-hints-element)
+      - [Sub elements of the grading-hints-type](#sub-elements-of-the-grading-hints-type)
+    + [root and combine - elements of the grades-nodes-type](#root-and-combine---elements-of-the-grades-nodes-type)
+      - [Sub elements of the grades-nodes-type](#sub-elements-of-the-grades-nodes-type)
+      - [Attributes of the grades-nodes-type](#attributes-of-the-grades-nodes-type)
+    + [test-ref and combine-ref - elements of the grades-base-ref-child-type](#test-ref-and-combine-ref---elements-of-the-grades-base-ref-child-type)
+      - [Sub elements of grades-base-ref-child-type common to "test-ref" pointers and "combine-ref" pointers](#sub-elements-of-grades-base-ref-child-type-common-to--test-ref--pointers-and--combine-ref--pointers)
+      - [Attributes of grades-base-ref-child-type common to "test-ref" pointers and "combine-ref" pointers](#attributes-of-grades-base-ref-child-type-common-to--test-ref--pointers-and--combine-ref--pointers)
+      - [Specific sub elements of the combine-ref element](#specific-sub-elements-of-the-combine-ref-element)
+      - [Specific attributes of the combine-ref element](#specific-attributes-of-the-combine-ref-element)
+      - [Specific sub elements of the test-ref element](#specific-sub-elements-of-the-test-ref-element)
+      - [Specific attributes of the test-ref element](#specific-attributes-of-the-test-ref-element)
+    + [nullify-conditions](#nullify-conditions)
+      - [Sub elements of the nullify-conditions element](#sub-elements-of-the-nullify-conditions-element)
+      - [Attributes of the nullify-conditions element](#attributes-of-the-nullify-conditions-element)
+    + [nullify-condition (without s)](#nullify-condition--without-s-)
+      - [Sub elements of the nullify-condition element](#sub-elements-of-the-nullify-condition-element)
+      - [Attributes of the nullify-condition element](#attributes-of-the-nullify-condition-element)
+      - [The nullify-combine-ref element](#the-nullify-combine-ref-element)
+      - [The nullify-test-ref element](#the-nullify-test-ref-element)
+      - [The nullify-literal element](#the-nullify-literal-element)
+
+
+      
 ### TODOs
 
  - [ ] check reference to Appendix A in description element
  
 
-
-ProFormA programming tasks can be assigned a grading scheme with the so-called *grading-hints*. This chapter describes simple and complex grading scheme examples and the XML-schema for grading-hints.
-
-We start with a section of examples. After that we introduce the grading-hints XML schema.
+We start with a [section of examples](#examples). After that we introduce the [grading-hints XML schema](#xml-schema).
 
 ### Examples
 
@@ -86,7 +124,7 @@ Let's make the example a bit more complex by weighting test results individually
 </tns:grading-hints>
 ```
 
-This specifies a weighted sum out of all test-generated scores. The weights have been chosen to add up to 1.0 in order to get a weighted average. The grading-hints XML-schema does recommend but not require weights adding up to 1. 
+This specifies a weighted sum out of all test-generated scores. The weights have been chosen to add up to 1.0 in order to get a weighted average. The grading-hints XML schema does recommend but not require weights adding up to 1. 
 
 A front end might present a result like this:
 
@@ -156,7 +194,7 @@ In a rich formatting language like HTML there would be more formatting options t
 
 #### Conditionally nullify scores
 
-Let's build upon the previous example. A teacher or a task author wants to nullify scores for advanced aspects if the basic aspects do not exceed a certain threshold. This seems reasonable when we take a closer look at static code analysis tools that often count rule violations. A student can achieve high scores in test3 and test4 when submitting a minimal program that has near to zero functionality. For this, the task author includes a _nullify condition_ at the child reference to the ``advanced`` child:
+Let's build upon the [previous example](#a-hierarchy-of-sub-results). A teacher or a task author wants to nullify scores for advanced aspects if the basic aspects do not exceed a certain threshold. This seems reasonable when we take a closer look at static code analysis tools that often count rule violations. A student can achieve high scores in test3 and test4 when submitting a minimal program that has near to zero functionality. For this, the task author includes a _nullify condition_ at the child reference to the ``advanced`` child:
 
 ```xml
 <tns:grading-hints xmlns:tns="urn:proforma:grades:v0.8">
@@ -223,7 +261,7 @@ The grading-hints schema allows nullification with a simple comparison like abov
 
 #### Referencing tests and sub tests
 
-Sometimes test granularity is too coarse grained when coming to grades. From the test tool's point of view it makes sense to execute e.g. all test cases in a unit test suite at once in a single tool pass. But, in a grading scheme the various different test aspects of the individual test cases might deserve a differentiate interpretation. We build upon the above example without nullification but with a three-leveled tree. Let's assume, the unit test ``test2`` executes a test suite of two test cases. The first test case labeled ``tc.a`` is considered a basic aspect while the second test case ``tc.b`` is advanced. (Another example could concern two violation rules in a static code analysis tool, but let's stick to the unit test example so as not to complicate it.) 
+Sometimes test granularity is too coarse grained when coming to grades. From the test tool's point of view it makes sense to execute e.g. all test cases in a unit test suite at once in a single tool pass. But, in a grading scheme the various different test aspects of the individual test cases might deserve a differentiate interpretation. We build upon the [above example without nullification but with a three-leveled tree](#a-hierarchy-of-sub-results). Let's assume, the unit test ``test2`` executes a test suite of two test cases. The first test case labeled ``tc.a`` is considered a basic aspect while the second test case ``tc.b`` is advanced. (Another example could concern two violation rules in a static code analysis tool, but let's stick to the unit test example so as not to complicate it.) 
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -286,7 +324,7 @@ A caveat: The labels ``tc.a`` and ``tc.b`` are specific to the test tool. The pr
 
 #### Combining sub tests and nullify conditions
 
-An author can combine sub test references and test references. As an example we extend the previous example. The author wants to nullify the score from the compilation test when all unit test cases miss the bar "0.5". For this in the following example the author adds one additional ``combine`` node labeld ``test2.max`` expressing the maximum of all unit test cases. With the new ``test2.max`` node it is easy to nullify the ``test1`` result, if the ``test2.max`` value is less than 0.5:
+An author can combine sub test references and test references. As an example we extend the [previous example](#referencing-tests-and-sub-tests). The author wants to nullify the score from the compilation test when all unit test cases miss the bar "0.5". For this in the following example the author adds one additional ``combine`` node labeld ``test2.max`` expressing the maximum of all unit test cases. With the new ``test2.max`` node it is easy to nullify the ``test1`` result, if the ``test2.max`` value is less than 0.5:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -430,7 +468,7 @@ When calculating grades based on these simple grading-hints, all \<test\> elemen
 
 #### Common elements
 
-There are some basic elements that are repeated at various places in the XML schema. First we describe these basic, somewhat supporting elements. After that we start by describing the root \<grading-hints\> element.
+There are some basic elements that are repeated at various places in the XML schema. First we describe these basic, somewhat supporting elements. [After that](#grading-hints-element) we start by describing the root \<grading-hints\> element.
 
 ##### displaytitle element
 
@@ -484,11 +522,11 @@ The grading-hints-type consist of the following elements
 
   - **root**
 
-    The \<root\> element ist the root node of the grading scheme hierarchy. If no children are specified, the total grading score will be obtained by including all test results scores. The "function" attribute specifies the accumulator function.
+    The [\<root\>](#root-and-combine---elements-of-the-grades-nodes-type) element ist the root node of the grading scheme hierarchy. If no children are specified, the total grading score will be obtained by including all test results scores. The "function" attribute specifies the accumulator function.
 
   - **combine**
 
-    The \<combine\> element ist an inner node of the grading scheme hierarchy, that is either a immediate child of the root node or any descendant node. A \<combine\> node specifies how to condense several sub results. Sub results can be test results or again "combined" results.
+    The [\<combine\>](#root-and-combine---elements-of-the-grades-nodes-type) element ist an inner node of the grading scheme hierarchy, that is either a immediate child of the root node or any descendant node. A \<combine\> node specifies how to condense several sub results. Sub results can be test results or again "combined" results.
 
   - **##other**
   
@@ -540,11 +578,11 @@ The grades-node-type represents an inner node of the grading scheme hierarchy. T
    
  - **test-ref**
  
-   A \<test-ref\> points to the ``id`` attribute if a \<test\> element in a ProFormA task. As such the result of the pointed at test is obtained and included in a bottom-up fashion in the calculation of the total result.
+   A [\<test-ref\>](#test-ref-and-combine-ref---elements-of-the-grades-base-ref-child-type) points to the ``id`` attribute if a \<test\> element in a ProFormA task. As such the result of the pointed at test is obtained and included in a bottom-up fashion in the calculation of the total result.
    
  - **combine-ref**
  
-   A \<combine-ref\> points to the ``id`` attribute of a \<combine\> element in the grading scheme hierarchy. As such the result of the pointed at node is obtained and included in a bottom-up fashion in the calculation of the total result.
+   A [\<combine-ref\>](#test-ref-and-combine-ref---elements-of-the-grades-base-ref-child-type) points to the ``id`` attribute of a \<combine\> element in the grading scheme hierarchy. As such the result of the pointed at node is obtained and included in a bottom-up fashion in the calculation of the total result.
    
 
 ##### Attributes of the grades-nodes-type
@@ -576,7 +614,7 @@ The grades-node-type represents an inner node of the grading scheme hierarchy. T
      
 #### test-ref and combine-ref - elements of the grades-base-ref-child-type
 
-The above \<combine-ref\> and \<test.ref\> elements both are derived from the following grades-base-ref-child-type. The respective section of the XMLschema is here:
+The above \<combine-ref\> and \<test.ref\> elements both are derived from the following grades-base-ref-child-type. The respective section of the XML schema is here:
 
     <xs:complexType name="grades-base-ref-child-type">
         <xs:sequence>
@@ -616,11 +654,11 @@ We first discuss the common elements of both kinds of pointers.
 
  - **nullify-conditions**
  
-   Specifies a composite condition when the sub result of the pointed-at node should get nullified. The pointed-at node is a test or a combine node. When calculating the condensed result for this node (this = the node sourcing the pointer), the score of the pointed-at node is assumed 0, if the composite condition is true.
+   Specifies a [composite condition](#nullify-conditions) when the sub result of the pointed-at node should get nullified. The pointed-at node is a test or a combine node. When calculating the condensed result for this node (this = the node sourcing the pointer), the score of the pointed-at node is assumed 0, if the composite condition is true.
    
  - **nullify-condition**
  
-   Specifies a _comparison_ condition when the sub result of the pointed-at node should get nullified. The only difference to \<nullify-conditions\> is the trailing "s" and the fact, that \<nullify-conditions\> represents a compositecondition while \<nullify-condition\> represents simple comparisoncondition.
+   Specifies a [_comparison_ condition](#nullify-condition-without-s) when the sub result of the pointed-at node should get nullified. The only difference to \<nullify-conditions\> is the trailing "s" and the fact, that \<nullify-conditions\> represents a compositecondition while \<nullify-condition\> represents simple comparisoncondition.
    
 ##### Attributes of grades-base-ref-child-type common to "test-ref" pointers and "combine-ref" pointers
 
@@ -713,7 +751,7 @@ A \<nullify-conditions\> element specifies a composite condition when the sub re
    
  - **nullify-condition**
    
-   A simple comparison condition as an operand of the boolean expression.
+   A simple [comparison condition](#nullify-condition-without-s) as an operand of the boolean expression.
    
    
 ##### Attributes of the nullify-conditions element
@@ -725,7 +763,7 @@ A \<nullify-conditions\> element specifies a composite condition when the sub re
 
 #### nullify-condition (without s)
 
-Specifies a simple comparison condition when the sub result of a pointed-at node should get nullified. This simple comparison condition is attributed with one of the six common comparison operators. Further it contains operands that refer to tests, combine nodes are that specify a numerical constant, which a result should be compared to.
+Specifies a simple comparison condition when the sub result of a pointed-at node should get nullified. This simple comparison condition is [attributed with one of the six common comparison operators](#attributes-of-the-nullify-condition-element). Further it contains operands that refer to [tests](#the-nullify-test-ref-element), [combine nodes](#the-nullify-combine-ref-element) are that specify a [numerical constant](#the-nullify-literal-element), which a result should be compared to.
 
     <xs:complexType name="grades-nullify-condition-type">
         <xs:sequence>
@@ -804,17 +842,17 @@ Specifies a simple comparison condition when the sub result of a pointed-at node
    * **le**: means "less than or equals"
 
    
-##### Attributes of the nullify-combine-ref element
+##### The nullify-combine-ref element
 
-The nullify-combine-ref element represents an operand of a comparison expression pointing to a "combine" node.
+The nullify-combine-ref element represents an operand of a comparison expression pointing to a "combine" node. It supports a single attribute:
 
  - **ref**
 
    The id of the pointed-at combine node.
  
-##### Attributes of the nullify-test-ref element
+##### The nullify-test-ref element
 
-The nullify-test-ref element represents an operand of a comparison expression pointing to a "test".
+The nullify-test-ref element represents an operand of a comparison expression pointing to a "test". It supports two attributes:
 
  - **ref**
 
@@ -826,9 +864,9 @@ The nullify-test-ref element represents an operand of a comparison expression po
    If the pointed at test exhibits sub test results, this points to one of the sub results. Examples are individual test cases in a unit test specification, individual violation rules in a static code analyzer, individual error classes in a compilation step, etc. Since the sub-ref format or content is test-tool-specific, it is not normed in the ProFormA format.
    
  
-##### Attributes of the nullify-literal element
+##### The nullify-literal element
 
-The nullify-literal element represents a numerical constant serving as an operand of the comparison expression.
+The nullify-literal element represents a numerical constant serving as an operand of the comparison expression. It supports a single attribute:
 
  - **value**
  
