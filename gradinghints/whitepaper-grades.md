@@ -187,7 +187,7 @@ The inner nodes at the medium level are ``combine`` nodes that define an accumul
 > |                 |        | Minimum of         |        | PMD         | 0.40 __details__ |                           |                |
 > |                 |        |                    |        | Checkstyle  | 0.90 __details__ |                      0.40 |       **0.56** |
 
-In a rich formatting language like HTML there would be more formatting options than in markdown. E. g. a ``colspan`` around the four cells heading east starting from _Basic aspects_ or from _Advanced aspects_ would make relationships clear. Also a ``rowspan`` around the six cells heading south starting from the upper left _Weighted sum of_ cell would work out clearly the extent of the weighted sum. An example look is given in following image or in the file ``images/whitepaper-grades-img1.png.png``:
+In a rich formatting language like HTML there would be more formatting options than in markdown. E. g. a ``colspan`` around the four cells heading east starting from _Basic aspects_ or from _Advanced aspects_ would make relationships clear. Also a ``rowspan`` around the six cells heading south starting from the upper left _Weighted sum of_ cell would work out clearly the extent of the weighted sum. An example look is given in the following image or in the file ``images/whitepaper-grades-img1.png``:
 
 ![The above table rendered in a rich formatting language like HTML using colspan, rowspan and background colors](images/whitepaper-grades-img1.png)
 
