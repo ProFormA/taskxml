@@ -72,6 +72,7 @@ Let's start with a [section of examples](#examples). After that we introduce the
 A typical simple example is as follows:
 
 ```xml
+<?xml version="1.0" encoding="UTF-8"?>
 <tns:grading-hints>
     <tns:root function="sum">
         <tns:test-ref ref="test1"/>
@@ -125,6 +126,7 @@ Last but not least, a front end could combine both approaches: a tabular represe
 Let's make the example a bit more complex by weighting test results individually:
 
 ```xml
+<?xml version="1.0" encoding="UTF-8"?>
 <tns:grading-hints>
     <tns:root function="sum">
         <tns:test-ref weight="0.33" ref="test1"/>
@@ -154,6 +156,7 @@ Note the additional column with factors (marked with the multiplication sign "x"
 Most tasks, but probably not all tasks, would consider the above configuration options to be adequate. But sometimes a task author needs more options. Consider a slightly more complicated setup that identifies different learning goals covered by different tests. E. g. test1 and test2 are considered tests that check the basic functionality of the submission, test3 and test4 are about advanced style and maintainability aspects of the solution. A task author would like to provide a global weighting scheme balancing basic and advanced aspects. Also the author would penalize errors in advanced aspects harder by taking the minimum score of test3 and test4. This would look like:
 
 ```xml
+<?xml version="1.0" encoding="UTF-8"?>
 <tns:grading-hints xmlns:tns="urn:proforma:grades:v0.8">
     <tns:root function="sum">
         <tns:displaytitle>Total</tns:displaytitle>
@@ -208,6 +211,7 @@ In a rich formatting language like HTML there would be more formatting options t
 Let's build upon the [previous example](#example-2-a-hierarchy-of-sub-results). A teacher or a task author wants to nullify scores for advanced aspects if the basic aspects do not exceed a certain threshold. This seems reasonable when we take a closer look at static code analysis tools that often count rule violations. A student can achieve high scores in test3 and test4 when submitting a minimal program that has near to zero functionality. For this, the task author includes a _nullify condition_ at the child reference to the ``advanced`` child:
 
 ```xml
+<?xml version="1.0" encoding="UTF-8"?>
 <tns:grading-hints xmlns:tns="urn:proforma:grades:v0.8">
     <tns:root function="sum">
         <tns:displaytitle>Total</tns:displaytitle>
@@ -425,6 +429,7 @@ By the way: the same effect of nullifying the compilation score when the best un
         <tns:test-ref weight="0.3" ref="test1">
             <tns:nullify-conditions compose-op="and">
                 <tns:displaytitle>Compilation score gets nullified when all unit tests miss 0.5</tns:displaytitle>
+                <tns:description><![CDATA[Students are not allowed to <em>steal</em> compilation points by submitting fake programs with near-to-zero functionality. That's why compilation score gets nullified when there is no successful unit test.]]></tns:description>
                 <tns:nullify-condition compare-op="lt">
                     <tns:nullify-test-ref ref="test2" sub-ref="tc.a"/>
                     <tns:nullify-literal value="0.5"/>
@@ -454,6 +459,8 @@ This time the user could get the following detail information, that can be gener
 
 > **Compilation score gets nullified when all unit tests miss 0.5**
 >
+> Students are not allowed to *steal* compilation points by submitting fake programs with near-to-zero functionality. That's why compilation score gets nullified when there is no successful unit test.
+> 
 > When calculating the _Basic aspects Score_ your _Compilation Score_ was __not__ nullified. 
 > 
 > Reason: At least one of the following conditions was True:
@@ -463,17 +470,20 @@ This time the user could get the following detail information, that can be gener
 
 The advantage of this approach is that of saving on an additional tree node. It depends on the task and the condition, whether an additional (reusable) tree node is better suited or the (nestable) composite nullify conditions. 
 
+The last example demonstrates using a description element in the nullify-conditions element. The ProFormA grading-hints can define many descriptions at various places. All descriptions are in HTML format.
+
 #### Example 6. Last: a very simple example
 
 Having seen so many complicated examples, we should state, that most tasks do not need to specify anything complex. The following is the simplest grading-hints element possible:
 
 ```xml
+<?xml version="1.0" encoding="UTF-8"?>
 <tns:grading-hints>
     <tns:root/>
 </tns:grading-hints>
 ```
 
-When calculating grades based on these simple grading-hints, all \<test\> element's scores are obtained and the minimum score will be the result.
+When calculating grades based on these simple grading-hints, all \<test\> element's scores are obtained and the minimum score will be the result. In other words the grading result will be _passed_ if and only if all tests passed.
 
 ### XML schema
 

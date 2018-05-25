@@ -10,17 +10,10 @@
     <tns:combine id="basic" function="sum">
         <tns:displaytitle>Basic aspects</tns:displaytitle>
         <tns:test-ref weight="0.3" ref="test1">
-            <tns:nullify-conditions compose-op="and">
-                <tns:displaytitle>Compilation score gets nullified when all unit tests miss 0.5</tns:displaytitle>
-                <tns:nullify-condition compare-op="lt">
-                    <tns:nullify-test-ref ref="test2" sub-ref="tc.a"/>
-                    <tns:nullify-literal value="0.5"/>
-                </tns:nullify-condition>
-                <tns:nullify-condition compare-op="lt">
-                    <tns:nullify-test-ref ref="test2" sub-ref="tc.b"/>
-                    <tns:nullify-literal value="0.5"/>
-                </tns:nullify-condition>
-            </tns:nullify-conditions>
+            <tns:nullify-condition compare-op="lt">
+                <tns:nullify-combine-ref ref="test2.max"/>
+                <tns:nullify-literal value="0.5"/>
+            </tns:nullify-condition>
         </tns:test-ref>
         <tns:test-ref weight="0.7" ref="test2" sub-ref="tc.a">
             <tns:displaytitle>Unit test, aspect A</tns:displaytitle>
@@ -33,5 +26,10 @@
         </tns:test-ref>
         <tns:test-ref ref="test3"/>
         <tns:test-ref ref="test4"/>
+    </tns:combine>
+    <tns:combine id="test2.max" function="max">
+        <tns:displaytitle>Best result of all unit test aspects</tns:displaytitle>
+        <tns:test-ref ref="test2" sub-ref="tc.a"/>
+        <tns:test-ref ref="test2" sub-ref="tc.b"/>
     </tns:combine>
 </tns:grading-hints>

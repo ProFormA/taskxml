@@ -5,12 +5,7 @@
     <tns:root function="sum">
         <tns:displaytitle>Total</tns:displaytitle>
         <tns:combine-ref weight="0.75" ref="basic"/>
-        <tns:combine-ref weight="0.25" ref="advanced">
-            <tns:nullify-condition compare-op="le">
-                <tns:nullify-combine-ref ref="basic"/>
-                <tns:nullify-literal value="0.8"/>
-            </tns:nullify-condition>
-        </tns:combine-ref>
+        <tns:combine-ref weight="0.25" ref="advanced"/>
     </tns:root>
     <tns:combine id="basic" function="sum">
         <tns:displaytitle>Basic aspects</tns:displaytitle>
