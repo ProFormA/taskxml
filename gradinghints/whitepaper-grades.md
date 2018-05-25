@@ -373,7 +373,7 @@ An author can combine sub test references and test references. As an example we 
 </tns:grading-hints>
 ```
 
-The topology shows the following graphic. There is a node ``test.max`` not connected to the root. The only purpose of the tree rooted at ``test2.max`` is a nullification condition of the edge between ``basic`` and ``test1``.
+The topology shows the following graphic. There is a node ``test.max`` not connected to the root via ordinary tree edges. The only purpose of the tree rooted at ``test2.max`` is a nullification condition of the edge between ``basic`` and ``test1``.
 
                                                              +--------+
                                                       +------+  root  +--------+
@@ -404,7 +404,7 @@ A possible representation in a front end is as follows. It does deviate from the
 > |                 |        |                    |        | PMD                 |         0.40 __details__ |                           |                |
 > |                 |        |                    |        | Checkstyle          |         0.90 __details__ |                      0.40 |       **0.40** |
 
-The Compilation Score does not get nullified, because the maximum of tc.a and tc.b scores is \>= 0.5. The user could get the following,automatically generated explanation when clicking on the __details__ link besides the "1.00 -\> 1.00" mark:
+The Compilation Score does not get nullified, because the maximum of tc.a and tc.b scores is \>= 0.5. The user could get the following, automatically generated explanation when clicking on the __details__ link besides the "1.00 -\> 1.00" mark:
 
 > When calculating the _Basic aspects Score_ your _Compilation Score_ was not nullified. Reason: _Best result of all unit test aspects_ should be \>= 0.5 and was 0.75.
 
@@ -450,7 +450,7 @@ By the way: the same effect of nullifying the compilation score when the best un
 </tns:grading-hints>
 ```
 
-This time the user could get the following detail information, thtat can be generated automatically from the grading scheme:
+This time the user could get the following detail information, that can be generated automatically from the grading scheme:
 
 > **Compilation score gets nullified when all unit tests miss 0.5**
 >
