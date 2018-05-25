@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tns:grading-hints xmlns:tns="urn:proforma:grades:v0.8"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xsi:schemaLocation="urn:proforma:grades:v0.8 ../proforma-grades.xsd">
+    <tns:root function="sum">
+        <tns:displaytitle>Total</tns:displaytitle>
+        <tns:combine-ref weight="0.75" ref="basic"/>
+        <tns:combine-ref weight="0.25" ref="advanced">
+            <tns:nullify-condition compare-op="le">
+                <tns:nullify-combine-ref ref="basic"/>
+                <tns:nullify-literal value="0.8"/>
+            </tns:nullify-condition>
+        </tns:combine-ref>
+    </tns:root>
+    <tns:combine id="basic" function="sum">
+        <tns:displaytitle>Basic aspects</tns:displaytitle>
+        <tns:test-ref weight="0.3" ref="test1"/>
+        <tns:test-ref weight="0.7" ref="test2"/>
+    </tns:combine>
+    <tns:combine id="advanced" function="min">
+        <tns:displaytitle>Advanced aspects</tns:displaytitle>
+        <tns:test-ref ref="test3"/>
+        <tns:test-ref ref="test4"/>
+    </tns:combine>
+</tns:grading-hints>
