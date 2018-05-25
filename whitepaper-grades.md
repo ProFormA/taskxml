@@ -7,7 +7,6 @@ ProFormA programming tasks can be assigned a grading scheme with the so-called *
 
 ### Table of contents
 
-- ["Grading hints" - hinting a grader when scoring submissions](#-grading-hints----hinting-a-grader-when-scoring-submissions)
   * [TODOs](#todos)
   * [Examples](#examples)
     + [Introducing a simple example](#introducing-a-simple-example)
@@ -16,7 +15,7 @@ ProFormA programming tasks can be assigned a grading scheme with the so-called *
     + [Conditionally nullify scores](#conditionally-nullify-scores)
     + [Referencing tests and sub tests](#referencing-tests-and-sub-tests)
     + [Combining sub tests and nullify conditions](#combining-sub-tests-and-nullify-conditions)
-    + [Last: a very simple example](#last--a-very-simple-example)
+    + [Last: a very simple example](#last-a-very-simple-example)
   * [XML schema](#xml-schema)
     + [Common elements](#common-elements)
       - [displaytitle element](#displaytitle-element)
@@ -27,8 +26,8 @@ ProFormA programming tasks can be assigned a grading scheme with the so-called *
       - [Sub elements of the grades-nodes-type](#sub-elements-of-the-grades-nodes-type)
       - [Attributes of the grades-nodes-type](#attributes-of-the-grades-nodes-type)
     + [test-ref and combine-ref - elements of the grades-base-ref-child-type](#test-ref-and-combine-ref---elements-of-the-grades-base-ref-child-type)
-      - [Sub elements of grades-base-ref-child-type common to "test-ref" pointers and "combine-ref" pointers](#sub-elements-of-grades-base-ref-child-type-common-to--test-ref--pointers-and--combine-ref--pointers)
-      - [Attributes of grades-base-ref-child-type common to "test-ref" pointers and "combine-ref" pointers](#attributes-of-grades-base-ref-child-type-common-to--test-ref--pointers-and--combine-ref--pointers)
+      - [Sub elements of grades-base-ref-child-type common to "test-ref" pointers and "combine-ref" pointers](#sub-elements-of-grades-base-ref-child-type-common-to-test-ref-pointers-and-combine-ref-pointers)
+      - [Attributes of grades-base-ref-child-type common to "test-ref" pointers and "combine-ref" pointers](#attributes-of-grades-base-ref-child-type-common-to-test-ref-pointers-and-combine-ref-pointers)
       - [Specific sub elements of the combine-ref element](#specific-sub-elements-of-the-combine-ref-element)
       - [Specific attributes of the combine-ref element](#specific-attributes-of-the-combine-ref-element)
       - [Specific sub elements of the test-ref element](#specific-sub-elements-of-the-test-ref-element)
@@ -36,7 +35,7 @@ ProFormA programming tasks can be assigned a grading scheme with the so-called *
     + [nullify-conditions](#nullify-conditions)
       - [Sub elements of the nullify-conditions element](#sub-elements-of-the-nullify-conditions-element)
       - [Attributes of the nullify-conditions element](#attributes-of-the-nullify-conditions-element)
-    + [nullify-condition (without s)](#nullify-condition--without-s-)
+    + [nullify-condition (without s)](#nullify-condition-without-s)
       - [Sub elements of the nullify-condition element](#sub-elements-of-the-nullify-condition-element)
       - [Attributes of the nullify-condition element](#attributes-of-the-nullify-condition-element)
       - [The nullify-combine-ref element](#the-nullify-combine-ref-element)
@@ -47,7 +46,7 @@ ProFormA programming tasks can be assigned a grading scheme with the so-called *
       
 ### TODOs
 
- - [ ] check reference to Appendix A in description element
+ - [ ] check reference to Appendix A in [description element](#description-and-internal-description-elements)
  
 
 We start with a [section of examples](#examples). After that we introduce the [grading-hints XML schema](#xml-schema).
