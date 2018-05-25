@@ -8,23 +8,24 @@ ProFormA programming tasks can be assigned a grading scheme with the so-called *
 ### Table of contents
 
   * [TODOs](#todos)
+  * [Abstract](#abstract)
   * [Examples](#examples)
-    + [Introducing a simple example](#introducing-a-simple-example)
-    + [Weighted sub results](#weighted-sub-results)
-    + [A hierarchy of sub results](#a-hierarchy-of-sub-results)
-    + [Conditionally nullify scores](#conditionally-nullify-scores)
-    + [Referencing tests and sub tests](#referencing-tests-and-sub-tests)
-    + [Combining sub tests and nullify conditions](#combining-sub-tests-and-nullify-conditions)
-    + [Last: a very simple example](#last-a-very-simple-example)
+    + [Example 1a. Introducing a simple example](#example-1a-introducing-a-simple-example)
+    + [Example 1b. Weighted sub results](#example-1b-weighted-sub-results)
+    + [Example 2. A hierarchy of sub results](#example-2-a-hierarchy-of-sub-results)
+    + [Example 3. Conditionally nullify scores](#example-3-conditionally-nullify-scores)
+    + [Example 4. Referencing tests and sub tests](#example-4-referencing-tests-and-sub-tests)
+    + [Example 5. Combining sub tests and nullify conditions](#example-5-combining-sub-tests-and-nullify-conditions)
+    + [Example 6. Last: a very simple example](#example-6-last-a-very-simple-example)
   * [XML schema](#xml-schema)
     + [Common elements](#common-elements)
       - [displaytitle element](#displaytitle-element)
       - [description and internal-description elements](#description-and-internal-description-elements)
     + [grading-hints element](#grading-hints-element)
       - [Sub elements of the grading-hints-type](#sub-elements-of-the-grading-hints-type)
-    + [root and combine - elements of the grades-nodes-type](#root-and-combine---elements-of-the-grades-nodes-type)
-      - [Sub elements of the grades-nodes-type](#sub-elements-of-the-grades-nodes-type)
-      - [Attributes of the grades-nodes-type](#attributes-of-the-grades-nodes-type)
+    + [root and combine - elements of the grades-node-type](#root-and-combine---elements-of-the-grades-node-type)
+      - [Sub elements of the grades-node-type](#sub-elements-of-the-grades-node-type)
+      - [Attributes of the grades-node-type](#attributes-of-the-grades-node-type)
     + [test-ref and combine-ref - elements of the grades-base-ref-child-type](#test-ref-and-combine-ref---elements-of-the-grades-base-ref-child-type)
       - [Sub elements of grades-base-ref-child-type common to "test-ref" pointers and "combine-ref" pointers](#sub-elements-of-grades-base-ref-child-type-common-to-test-ref-pointers-and-combine-ref-pointers)
       - [Attributes of grades-base-ref-child-type common to "test-ref" pointers and "combine-ref" pointers](#attributes-of-grades-base-ref-child-type-common-to-test-ref-pointers-and-combine-ref-pointers)
@@ -49,11 +50,24 @@ ProFormA programming tasks can be assigned a grading scheme with the so-called *
  - [ ] check reference to Appendix A in [description element](#description-and-internal-description-elements)
  
 
-We start with a [section of examples](#examples). After that we introduce the [grading-hints XML schema](#xml-schema).
+
+### Abstract
+
+A grading-hints section of a ProFormA task obtains scores from tests. Most ProFormA tasks define more than one test. Every test in a ProFormA task is expected to generate a score. If a test doesn't generate a score, it will at least generate some output like *passed* or *failed*. Such a binary output can be mapped automatically to values 1 or 0 respectively by graders that support the grading-hints schema. The grading-hints schema is designed to describe, how a grader should calculate a total result from the individual test results.
+
+In fact, many test tools do not generate a single score. E. g. a unit test tool usually executes several test cases for a given task where each test case reports an individual result. In a simple but useful setting, a grader receives a log dump from the test tool that lists all individual test case result. The log dump usually includes an overall *passed* classification if and only if all test cases passed. In a simple setting, the task author takes that overall classification as a single score per test. With this, the author defines a task's grading-hints as a calculation rule based on one score per test.
+
+Nevertheless, the grading-hints element described in this chapter is also capable of calculating a total grading result out of individual test *case* results. For this, so-called *sub test results" may be referenced and included in a calculation rule.
+
+Last but not least, the grading-hints element can define so-called "nullifications". E. g. if the unit test tool reports less than p % of all test cases successful, then a task author might decide not to credit any score for a successfull compilation. If instead at least p % of all test cases passed, the grading-hints could include e. g. a fixed additional score for successful compilation. This way, students cannot "steal" points for compilation by submitting a nearly empty program file.
+
+Grading hints are hints for the grader to calculate an overall score from individual test and sub test scores. But, also a middle ware or a user-connected front end like a learning management system (LMS) could benefit from interpreting the grading hints. For the presentation in this chapter we focus on the grading process and on how individual test and sub test scores are condensed into a total result. As a side note we present possible ways, how to render results to students. Usually it will not suffice to report a simple number. Instead a grader or a front end will have to explain the calculation rules behind that number to the student. That's why the [examples section](#examples) suggests suitable renderings of grading results in order to prove feasibility.
+
+Let's start with a [section of examples](#examples). After that we introduce the [grading-hints XML schema](#xml-schema).
 
 ### Examples
 
-#### Introducing a simple example
+#### Example 1a. Introducing a simple example
 
 A typical simple example is as follows:
 
@@ -68,9 +82,7 @@ A typical simple example is as follows:
 </tns:grading-hints>
 ```
 
-A grading-hints section obtains scores from tests. Every test in a ProFormA task is expected to generate a score. If a test doesn't generate a score, it will at least generate some output like *passed* or *failed*. Such a binary output can be mapped automatically to values 1 or 0 respectively by graders that support the grading-hints schema.
-
-The above simple example calculates the sum of all test-generated scores. From this a grader, a middle ware, or a user-connected front end like a learning management system (LMS) could produce a scoring result for students like the following:
+The above simple example calculates the sum of all test-generated scores. From this a grader could produce a scoring result for students like the following:
 
 > Your grade result is composed of several test results:
 >
@@ -92,7 +104,7 @@ The above simple example calculates the sum of all test-generated scores. From t
 >         
 > Total score achieved: **2.75**
 
-The titles _Compilation_, _Unit test_, etc. are specified in the \<tests\> section of a ProFormA task. The test id printed in parentheses usually would not be included. It is only included to make our explanations comprehensible.
+The titles _Compilation_, _Unit test_, etc. are assumed to be specified in the \<tests\> section of a ProFormA task. The test id printed in parentheses usually would not be included in the report. It is only included in this whitepaper to make the report structure clear.
 
 A tabular representation might even be clearer but lacks the possibility of including detailed feedback directly below the quantitative result. Instead a front end could provide links to detailed textual feedback:
 
@@ -104,11 +116,11 @@ A tabular representation might even be clearer but lacks the possibility of incl
 > |         | PMD          | 0.40 __details__ |               | 
 > |         | Checkstyle   | 0.90 __details__ |      **2.75** | 
 
-The **details** could be clickable links that shows a popup or that routes the user to an anchor in a large HTML document.
+The **details** could be clickable links that show a popup or that route the user to an anchor in a large HTML document.
 
 Last but not least, a front end could combine both approaches: a tabular representation for an overview and the bullet point list for the details. The __details__ links in the table could lead the user directly to the respective section in the bullet point list.
 
-#### Weighted sub results
+#### Example 1b. Weighted sub results
 
 Let's make the example a bit more complex by weighting test results individually:
 
@@ -137,7 +149,7 @@ A front end might present a result like this:
 
 Note the additional column with factors (marked with the multiplication sign "x") and the term _Weighted Sum_ in the left column.
 
-#### A hierarchy of sub results
+#### Example 2. A hierarchy of sub results
 
 Most tasks, but probably not all tasks, would consider the above configuration options to be adequate. But sometimes a task author needs more options. Consider a slightly more complicated setup that identifies different learning goals covered by different tests. E. g. test1 and test2 are considered tests that check the basic functionality of the submission, test3 and test4 are about advanced style and maintainability aspects of the solution. A task author would like to provide a global weighting scheme balancing basic and advanced aspects. Also the author would penalize errors in advanced aspects harder by taking the minimum score of test3 and test4. This would look like:
 
@@ -191,9 +203,9 @@ In a rich formatting language like HTML there would be more formatting options t
 
 ![The above table rendered in a rich formatting language like HTML using colspan, rowspan and background colors](images/whitepaper-grades-img1.png)
 
-#### Conditionally nullify scores
+#### Example 3. Conditionally nullify scores
 
-Let's build upon the [previous example](#a-hierarchy-of-sub-results). A teacher or a task author wants to nullify scores for advanced aspects if the basic aspects do not exceed a certain threshold. This seems reasonable when we take a closer look at static code analysis tools that often count rule violations. A student can achieve high scores in test3 and test4 when submitting a minimal program that has near to zero functionality. For this, the task author includes a _nullify condition_ at the child reference to the ``advanced`` child:
+Let's build upon the [previous example](#example-2-a-hierarchy-of-sub-results). A teacher or a task author wants to nullify scores for advanced aspects if the basic aspects do not exceed a certain threshold. This seems reasonable when we take a closer look at static code analysis tools that often count rule violations. A student can achieve high scores in test3 and test4 when submitting a minimal program that has near to zero functionality. For this, the task author includes a _nullify condition_ at the child reference to the ``advanced`` child:
 
 ```xml
 <tns:grading-hints xmlns:tns="urn:proforma:grades:v0.8">
@@ -258,9 +270,9 @@ In the cell with the _Advanced aspects_'s score the nullification could be repre
 
 The grading-hints schema allows nullification with a simple comparison like above using any of the common numerical comparators. Also an author can build composite conditions by combing simple conditions in an and-or-tree.
 
-#### Referencing tests and sub tests
+#### Example 4. Referencing tests and sub tests
 
-Sometimes test granularity is too coarse grained when coming to grades. From the test tool's point of view it makes sense to execute e.g. all test cases in a unit test suite at once in a single tool pass. But, in a grading scheme the various different test aspects of the individual test cases might deserve a differentiate interpretation. We build upon the [above example without nullification but with a three-leveled tree](#a-hierarchy-of-sub-results). Let's assume, the unit test ``test2`` executes a test suite of two test cases. The first test case labeled ``tc.a`` is considered a basic aspect while the second test case ``tc.b`` is advanced. (Another example could concern two violation rules in a static code analysis tool, but let's stick to the unit test example so as not to complicate it.) 
+Sometimes test granularity is too coarse grained when coming to grades. From the test tool's point of view it makes sense to execute e.g. all test cases in a unit test suite at once in a single tool pass. But, in a grading scheme the various different test aspects of the individual test cases might deserve a differentiate interpretation. We build upon the [above example without nullification but with a three-leveled tree](#example-2-a-hierarchy-of-sub-results). Let's assume, the unit test ``test2`` executes a test suite of two test cases. The first test case labeled ``tc.a`` is considered a basic aspect while the second test case ``tc.b`` is advanced. (Another example could concern two violation rules in a static code analysis tool, but let's stick to the unit test example so as not to complicate it.) 
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -321,9 +333,9 @@ The front end representation of a submission result depicts the specific sub tes
     
 A caveat: The labels ``tc.a`` and ``tc.b`` are specific to the test tool. The proposed grading scheme assumes, that the test tool provides an indexed result such that when calculating grades we can randomly access each sub result. Since the grading scheme hard-codes test-tool-specific sub-result-labels, such a grading scheme has a lower chance to be exchanged between graders, especially between different test tool backends.
 
-#### Combining sub tests and nullify conditions
+#### Example 5. Combining sub tests and nullify conditions
 
-An author can combine sub test references and test references. As an example we extend the [previous example](#referencing-tests-and-sub-tests). The author wants to nullify the score from the compilation test when all unit test cases miss the bar "0.5". For this in the following example the author adds one additional ``combine`` node labeld ``test2.max`` expressing the maximum of all unit test cases. With the new ``test2.max`` node it is easy to nullify the ``test1`` result, if the ``test2.max`` value is less than 0.5:
+An author can combine sub test references and test references. As an example we extend the [previous example](#example-4-referencing-tests-and-sub-tests). The author wants to nullify the score from the compilation test when all unit test cases miss the bar "0.5". For this in the following example the author adds one additional ``combine`` node labeld ``test2.max`` expressing the maximum of all unit test cases. With the new ``test2.max`` node it is easy to nullify the ``test1`` result, if the ``test2.max`` value is less than 0.5:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -451,7 +463,7 @@ This time the user could get the following detail information, thtat can be gene
 
 The advantage of this approach is that of saving on an additional tree node. It depends on the task and the condition, whether an additional (reusable) tree node is better suited or the (nestable) composite nullify conditions. 
 
-#### Last: a very simple example
+#### Example 6. Last: a very simple example
 
 Having seen so many complicated examples, we should state, that most tasks do not need to specify anything complex. The following is the simplest grading-hints element possible:
 
@@ -521,18 +533,18 @@ The grading-hints-type consist of the following elements
 
   - **root**
 
-    The [\<root\>](#root-and-combine---elements-of-the-grades-nodes-type) element ist the root node of the grading scheme hierarchy. If no children are specified, the total grading score will be obtained by including all test results scores. The "function" attribute specifies the accumulator function.
+    The [\<root\>](#root-and-combine---elements-of-the-grades-node-type) element ist the root node of the grading scheme hierarchy. If no children are specified, the total grading score will be obtained by including all test results scores. The "function" attribute specifies the accumulator function.
 
   - **combine**
 
-    The [\<combine\>](#root-and-combine---elements-of-the-grades-nodes-type) element ist an inner node of the grading scheme hierarchy, that is either a immediate child of the root node or any descendant node. A \<combine\> node specifies how to condense several sub results. Sub results can be test results or again "combined" results.
+    The [\<combine\>](#root-and-combine---elements-of-the-grades-node-type) element ist an inner node of the grading scheme hierarchy, that is either a immediate child of the root node or any descendant node. A \<combine\> node specifies how to condense several sub results. Sub results can be test results or again "combined" results.
 
   - **##other**
   
     This holds any non-standard information that can be used by a grader or humans to calculate a total result from tests results.
 
 
-#### root and combine - elements of the grades-nodes-type
+#### root and combine - elements of the grades-node-type
 
 The above \<root\> and <\combine\> elements both are of the following grades-node-type:
 
@@ -561,7 +573,7 @@ The above \<root\> and <\combine\> elements both are of the following grades-nod
 
 The grades-node-type represents an inner node of the grading scheme hierarchy. There are only two types of inner nodes: the "root" node and "combine" nodes.
 
-##### Sub elements of the grades-nodes-type
+##### Sub elements of the grades-node-type
 
  - **displaytitle**
  
@@ -584,7 +596,7 @@ The grades-node-type represents an inner node of the grading scheme hierarchy. T
    A [\<combine-ref\>](#test-ref-and-combine-ref---elements-of-the-grades-base-ref-child-type) points to the ``id`` attribute of a \<combine\> element in the grading scheme hierarchy. As such the result of the pointed at node is obtained and included in a bottom-up fashion in the calculation of the total result.
    
 
-##### Attributes of the grades-nodes-type
+##### Attributes of the grades-node-type
 
  - **id**
  
