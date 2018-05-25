@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tns:grading-hints xmlns:tns="urn:proforma:grades:v0.8"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xsi:schemaLocation="urn:proforma:grades:v0.8 ../proforma-grades.xsd">
+    <tns:root function="sum">
+        <tns:test-ref ref="test1"/>
+        <tns:test-ref ref="test2"/>
+        <tns:test-ref ref="test3"/>
+        <tns:test-ref ref="test4"/>
+    </tns:root>
+</tns:grading-hints>
