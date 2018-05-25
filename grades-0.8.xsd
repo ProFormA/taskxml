@@ -1,329 +1,330 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet type="text/xsl" href="xsd2html.xsl"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
-           targetNamespace="urn:proforma:grades:v0.8" 
-           xmlns:tns="urn:proforma:grades:v0.8" 
-           elementFormDefault="qualified">
-  
-  <xs:element name="grading-hints" type="tns:grading-hints-type">
-    <xs:key name="combineids">
-      <xs:selector xpath=".//tns:combine"/>
-      <xs:field xpath="@id"/>
-    </xs:key>
-    <xs:keyref name="combinerefs" refer="tns:combineids">
-      <xs:selector xpath=".//tns:combine-ref|.//tns:nullify-combine-ref"/>
-      <xs:field xpath="@ref"/>
-    </xs:keyref>
-  </xs:element>
-  
-  <xs:complexType name="grading-hints-type">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-        Root element type of a ProFormA grading-hints element.
-        This includes the complete hierarchical grading scheme with all tests references,
-        weights, accumulating functions and nullify conditions. Hierarchy nodes
-        and conditions can get a title and descriptions. All information below this element 
-        except the root node is optional.
-        Grader-specific hints from other XML namespaces can be included in xs:any elements.
-      </xs:documentation>
-    </xs:annotation>
-    <xs:sequence>
-      <xs:element name="root" type="tns:grades-node-type">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="urn:proforma:grades:v0.8" targetNamespace="urn:proforma:grades:v0.8" elementFormDefault="qualified">
+    <xs:element name="grading-hints" type="tns:grading-hints-type">
+        <xs:key name="combineids">
+            <xs:selector xpath=".//tns:combine" />
+            <xs:field xpath="@id" />
+        </xs:key>
+        <xs:keyref name="combinerefs" refer="tns:combineids">
+            <xs:selector xpath=".//tns:combine-ref|.//tns:nullify-combine-ref" />
+            <xs:field xpath="@ref" />
+        </xs:keyref>
+    </xs:element>
+    <xs:complexType name="grading-hints-type">
         <xs:annotation>
-          <xs:documentation xml:lang="en">
-            Root node of the grading scheme hierarchy. If no children are specified, the total
-            grading score will be obtained by including all test results scores.
-            The "function" attribute specifies the accumulator function.
-          </xs:documentation>
+            <xs:documentation xml:lang="en">Root element type of a ProFormA grading-hints element. This includes the complete hierarchical grading scheme with all tests references, weights, accumulating functions and nullify conditions. Hierarchy nodes and conditions can get a title and descriptions. All information below this element except the root node is optional. Grader-specific hints from other XML namespaces can be included in xs:any elements.</xs:documentation>
         </xs:annotation>
-      </xs:element>
-      <xs:element name="combine" type="tns:grades-node-type" minOccurs="0" maxOccurs="unbounded">
-        <xs:annotation>
-          <xs:documentation xml:lang="en">
-            Inner node of the grading scheme hierarchy. This can be a child if the root node or any descendant node.
-            A "combine" node specifies how to condense several sub results. Sub results
-            can be test results or again "combined" results.
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="lax">
-        <xs:annotation>
-          <xs:documentation xml:lang="en">
-            Any non-standard information that can be used by a grader or humans to calculate a total result
-            from tests results.
-          </xs:documentation>
-        </xs:annotation>
-      </xs:any>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="grades-node-type">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-        Inner node of the grading scheme hierarchy. 
-        There are two types of inner nodes: the "root" node and "combine" nodes.
-      </xs:documentation>
-    </xs:annotation>
-    <xs:sequence>
-      <xs:element name="displaytitle" type="xs:string" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation xml:lang="en">
-            A not too long title to be shown above the grading result represented by this node.
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="description" type="tns:description-type" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation xml:lang="en">
-            A more or less comprehensive description of the problem aspect represented by
-            this node.
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="internal-description" type="tns:description-type" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation xml:lang="en">
-            A more or less comprehensive internal description of the problem aspect represented by
-            this node. Internal descriptions are meant for teachers and maybe grading assistants.
-            Internal descriptions are not shown to students. The internal description could
-            include didactic background information and possibly technical or organizational details about this
-            grading aspect.
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element name="test-ref" type="tns:grades-test-ref-child-type"/>
-        <xs:element name="combine-ref" type="tns:grades-combine-ref-child-type"/>
-      </xs:choice>
-    </xs:sequence>
-    <xs:attribute name="id" type="xs:string" use="optional">
-      <xs:annotation>
-        <xs:documentation xml:lang="en">
-            Node identifier. It is optional for the "root" node and required for "combine" nodes.
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="function" use="optional" default="min">
-      <xs:simpleType>
-        <xs:restriction base="xs:string">
-          <xs:enumeration value="min">
-            <xs:annotation>
-              <xs:documentation xml:lang="en">
-                Specifies the minimum of several sub scores. 
-                This can be used in an "all or nothing" situation, where a parent score should reflect the worst of the child results.
-                Weights can be attached to children to express the valency of a child's result.
-                The child node representing the easiest aspect among its siblings could get 
-                the weight 1. Child nodes for grading aspects connected with a 
-                higher effort represent scores that are more difficult to achieve. These child nodes could get
-                weights larger than 1. This would guarantee, that when all child nodes results are in [0,1] also the parent node
-                result is in [0,1].
-              </xs:documentation>
-            </xs:annotation>
-          </xs:enumeration>
-          <xs:enumeration value="max">
-            <xs:annotation>
-              <xs:documentation xml:lang="en">
-                Specifies the maximum of several sub scores. 
-                This is used in an "one success is enough" situation, where a parent score should reflect the best of the child results.
-                An example is a task or a graded problem aspect that could 
-                be solved in different ways and for each way there is a separate test element in the task.
-                A solution that succeeds any one of these tests is regarded successful.
-                If one of the different ways of solving the task 
-                is more sophisticated than the others, the respective child test could get the highest weight 1.
-                Easier, less valent solution paths get lower weights between 0 and 1.
-                This would guarantee, that when all child nodes results are in [0,1] also the parent node
-                result is in [0,1].
-              </xs:documentation>
-            </xs:annotation>
-          </xs:enumeration>
-          <xs:enumeration value="sum">
-            <xs:annotation>
-              <xs:documentation xml:lang="en">
-                Specifies the sum of several sub scores. 
-                This is used in a situation, where every child represents a problem aspect that could be solved more or less 
-                independently of the other aspects. Weights can be attached to child nodes. Those child nodes representing
-                easy problem aspects could get lower weights than other aspects. 
-                If all weights of all direct children of a node add up to 1, this would
-                guarantee, that the parent node
-                result is in [0,1] when all child nodes results are in [0,1].
-              </xs:documentation>
-            </xs:annotation>
-          </xs:enumeration>
-          <xs:enumeration value="avg">
-            <xs:annotation>
-              <xs:documentation xml:lang="en">
-                Specifies the average of several sub scores. 
-                This is the special case of a sum with equal weights for every child while all weights add up to 1.
-                Child nodes of an "avg"-node should not get any weights because they are ignored,
-              </xs:documentation>
-            </xs:annotation>
-          </xs:enumeration>
-        </xs:restriction>
-      </xs:simpleType>
-    </xs:attribute>
-  </xs:complexType>
-
-  <xs:complexType name="grades-base-ref-child-type">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-        Inner nodes of the grading scheme hierarchy carry pointers to children.
-        This element represents such a pointer. There are two kinds of pointers:
-        "test-ref" pointers and "combiner-ref" pointers.
-      </xs:documentation>
-    </xs:annotation>
-    <xs:sequence>
-      <xs:choice minOccurs="0">
-        <xs:element name="nullify-conditions" type="tns:grades-nullify-conditions-type"/>
-        <xs:element name="nullify-condition" type="tns:grades-nullify-condition-type"/>
-      </xs:choice>
-    </xs:sequence>
-    <xs:attribute name="weight" type="xs:double" use="optional" />
-  </xs:complexType>
-
-  <xs:complexType name="grades-test-ref-child-type">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-        A "test-ref" node points to a test in a ProFormA task. 
-        As such the result of the pointed at test is obtained and included is a bottom-up fashion 
-        in the calculation of the total result.
-      </xs:documentation>
-    </xs:annotation>
-    <xs:complexContent>
-      <xs:extension base="tns:grades-base-ref-child-type">
         <xs:sequence>
-          <xs:element name="displaytitle" type="xs:string" minOccurs="0">
-            <xs:annotation>
-              <xs:documentation xml:lang="en">
-                A not too long title to be shown above the pointed-at test's result.
-                Overrides the title of the pointed-at test element. This can be used
-                especially when pointing to sub test results.
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element name="description" type="tns:description-type" minOccurs="0">
-            <xs:annotation>
-              <xs:documentation xml:lang="en">
-                A more or less comprehensive description of the problem aspect represented by
-                the pointed-at test. This can be used
-                especially when pointing to sub test results.
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element name="internal-description" type="tns:description-type" minOccurs="0">
-            <xs:annotation>
-              <xs:documentation xml:lang="en">
-                A more or less comprehensive internal description of the problem aspect represented by
-                the pointed-at test. This can be used especially when pointing to sub test results. 
-                Internal descriptions are meant for teachers and maybe grading assistants.
-                Internal descriptions are not shown to students. The internal description could
-                include didactic background information and possibly technical or organizational details about this
-                grading aspect.
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
+            <xs:element name="root" type="tns:grades-node-type">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Root node of the grading scheme hierarchy. If no children are specified, the total grading score will be obtained by including all test results scores. The "function" attribute specifies the accumulator function.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="combine" type="tns:grades-node-type" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Inner node of the grading scheme hierarchy. This can be a child of the root node or any descendant node. A "combine" node specifies how to condense several sub results. Sub results can be test results or again "combined" results.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="lax">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Any non-standard information that can be used by a grader or humans to calculate a total result from tests results.</xs:documentation>
+                </xs:annotation>
+            </xs:any>
         </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="grades-node-type">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Inner node of the grading scheme hierarchy. There are only two types of inner nodes: the "root" node and "combine" nodes.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="displaytitle" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">A not too long title to be shown above the grading result represented by this node.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="description" type="tns:description-type" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">A more or less comprehensive description of the problem aspect represented by this node.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="internal-description" type="tns:description-type" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">A more or less comprehensive internal description of the problem aspect represented by this node. Internal descriptions are meant for teachers and maybe grading assistants. Internal descriptions are not shown to students. The internal description could include didactic background information and possibly technical or organizational details about this grading aspect.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="test-ref" type="tns:grades-test-ref-child-type" />
+                <xs:element name="combine-ref" type="tns:grades-combine-ref-child-type" />
+            </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Node identifier. It is optional for the "root" node and required for "combine" nodes.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="function" use="optional" default="min">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Accumulator function that is used to condense several sub results to a single result.</xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="min">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">Specifies the minimum of several sub scores. This can be used in an "all or nothing" situation, where a parent score should reflect the worst of the child results. Weights can be attached to children to express the valency of a child's result. The child node representing the easiest aspect among its siblings could get the weight 1. Child nodes for grading aspects connected with a higher effort represent scores that are more difficult to achieve. These child nodes could get weights larger than 1. This would guarantee, that when all child nodes results are in [0,1] also the parent node result is in [0,1].</xs:documentation>
+                        </xs:annotation>
+                    </xs:enumeration>
+                    <xs:enumeration value="max">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">Specifies the maximum of several sub scores. This is used in an "one success is enough" situation, where a parent score should reflect the best of the child results. An example is a task or a graded problem aspect that could be solved in different ways and for each way there is a separate test element in the task. A solution that succeeds any one of these tests is regarded successful. If one of the different ways of solving the task is more sophisticated than the others, the respective child test could get the highest weight 1. Easier, less valent solution paths get lower weights between 0 and 1. This would guarantee, that when all child nodes results are in [0,1] also the parent node result is in [0,1].</xs:documentation>
+                        </xs:annotation>
+                    </xs:enumeration>
+                    <xs:enumeration value="sum">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">Specifies the sum of several sub scores. This is used in a situation, where every child represents a problem aspect that could be solved more or less independently of the other aspects. Weights can be attached to child nodes. Those child nodes representing easy problem aspects could get lower weights than other aspects. If all weights of all direct children of a node add up to 1, this would guarantee, that the parent node result is in [0,1] when all child nodes results are in [0,1].</xs:documentation>
+                        </xs:annotation>
+                    </xs:enumeration>
+                    <xs:enumeration value="avg">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">Specifies the average of several sub scores. This is the special case of a sum with equal weights for every child while all weights add up to 1. Child nodes of an "avg"-node should not get any weights because in that case weights are ignored.</xs:documentation>
+                        </xs:annotation>
+                    </xs:enumeration>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="grades-base-ref-child-type">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Inner nodes of the grading scheme hierarchy carry pointers to children. This element represents such a pointer. There are two kinds of pointers: "test-ref" pointers and "combine-ref" pointers.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:choice minOccurs="0">
+                <xs:element name="nullify-conditions" type="tns:grades-nullify-conditions-type">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">Specifies a _composite_ condition when the sub result of the pointed-at node should get nullified. The pointed-at node is a test or a combine node. When calculating the condensed result for this node (this = the node sourcing the pointer), the score of the pointed-at node is assumed 0, if the composite condition is true.</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="nullify-condition" type="tns:grades-nullify-condition-type">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">Specifies a _comparison_ condition when the sub result of the pointed-at node should get nullified. The only difference to &lt;nullify-conditions&gt; is the trailing "s" and the fact, that &lt;nullify-conditions&gt; represents a compositecondition while &lt;nullify-condition&gt; represents simple comparisoncondition.</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+            </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="weight" type="xs:double" use="optional" >
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Specifies a weight that is multiplied to the sub result of the pointed-at node. The pointed-at node is a test or a combine node. When calculating the condensed result for this node (this = the node sourcing the pointer), the score of the pointed-at node is multiplied by the weight, if present. Otherwise nothing is multiplied. A special case is together with the function _avg_ where possibly attributed weights are completely ignored.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="grades-test-ref-child-type">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">A "test-ref" node points to a test in a ProFormA task. As such the result of the pointed at test is obtained and included in a bottom-up fashion in the calculation of the total result.</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="tns:grades-base-ref-child-type">
+                <xs:sequence>
+                    <xs:element name="displaytitle" type="xs:string" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">A not too long title to be shown above the pointed-at test's result. Overrides the title of the pointed-at test element. This can be used especially when pointing to sub test results.</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="description" type="tns:description-type" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">A more or less comprehensive description of the problem aspect represented by the pointed-at test. This can be used especially when pointing to sub test results.</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="internal-description" type="tns:description-type" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">A more or less comprehensive internal description of the problem aspect represented by the pointed-at test. This can be used especially when pointing to sub test results. Internal descriptions are meant for teachers and maybe grading assistants. Internal descriptions are not shown to students. The internal description could include didactic background information and possibly technical or organizational details about this grading aspect.</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+                <xs:attribute name="ref" type="xs:string" use="required">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">The id of the pointed-at test.</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="sub-ref" type="xs:string" use="optional">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">If the pointed at test exhibits sub test results, this points to one of the sub results. Examples are individual test cases in a unit test specification, individual violation rules in a static code analyzer, individual error classes in a compilation step, etc. Since the sub-ref format or content is test-tool-specific, it is not normed in the ProFormA format.</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="grades-combine-ref-child-type">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">A "combine-ref" node points to a "combine" node in the grading scheme hierarchy. As such the result of the pointed at node is obtained and included in a bottom-up fashion in the calculation of the total result.</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="tns:grades-base-ref-child-type">
+                <xs:attribute name="ref" type="xs:string" use="required">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">The id of the pointed-at combine node.</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="grades-nullify-conditions-type">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Specifies a composite condition when the sub result of a pointed-at node should get nullified. The composite condition is attributed with one of the boolean operators { and, or }. Further it contains operands that usually are of the nullify-condition type, which represents a simple comparison. Nevertheless a composite condition can have nested composite conditions as operands as well.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="displaytitle" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">A title to be displayed when explaining a score nullification to students or teachers. Front ends might decide to explain nullification conditions in a grading scheme even if for a certain submission no nullification took place.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="description" type="tns:description-type" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">A detailed description to be displayed when explaining a score nullification. Front ends might decide to extend this description by an automatically generated, human readable version of the involved boolean expression.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="internal-description" type="tns:description-type" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">A detailed description to be displayed to teachers and grading assistants only.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:choice minOccurs="2" maxOccurs="unbounded">
+                <xs:element name="nullify-conditions" type="tns:grades-nullify-conditions-type">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">An operand of the boolean expression, itself being a composite condition.</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="nullify-condition" type="tns:grades-nullify-condition-type">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">A simple comparison condition as an operand of the boolean expression.</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+            </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="compose-op" use="required">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">The boolean operator of the boolean expression.</xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="and" />
+                    <xs:enumeration value="or" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="grades-nullify-condition-type">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Specifies a simple comparison condition when the sub result of a pointed-at node should get nullified. This simple comparison condition is attributed with one of the six common comparison operators. Further it contains operands that refer to tests, combine nodes are that specify a numerical constant, which a result should be compared to.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="displaytitle" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">A title to be displayed when explaining a score nullification to students or teachers. Front ends might decide to explain nullification conditions in a grading scheme even if for a certain submission no nullification took place.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="description" type="tns:description-type" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">A detailed description to be displayed when explaining a score nullification. Front ends might decide to extend this description by an automatically generated, human readable version of the involved comparison expression.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="internal-description" type="tns:description-type" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">A detailed description to be displayed to teachers and grading assistants only.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:choice minOccurs="2" maxOccurs="2">
+                <xs:element name="nullify-combine-ref" type="tns:grades-nullify-combine-ref-type">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">An operand of the comparison expression pointing to a "combine" node. When evaluating the condition, the numerical score calculated for the referenced combine node will be used as an operand in comparison.</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="nullify-test-ref" type="tns:grades-nullify-test-ref-type">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">An operand of the comparison expression pointing to a "test". When evaluating the condition, the numerical score delivered by the referenced test will be used as an operand in comparison.</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="nullify-literal" type="tns:grades-nullify-literal-type">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">A numerical constant serving as an operand of the comparison expression. The constant is specified as a "value" attribute in the nullify-literal element.</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+            </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="compare-op" use="required">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">The comparison operator of the comparison expression.</xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="eq">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">equals</xs:documentation>
+                        </xs:annotation>
+                    </xs:enumeration>
+                    <xs:enumeration value="ne">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">not equals</xs:documentation>
+                        </xs:annotation>
+                    </xs:enumeration>
+                    <xs:enumeration value="gt">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">greater than</xs:documentation>
+                        </xs:annotation>
+                    </xs:enumeration>
+                    <xs:enumeration value="ge">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">greater than or equals</xs:documentation>
+                        </xs:annotation>
+                    </xs:enumeration>
+                    <xs:enumeration value="lt">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">less than</xs:documentation>
+                        </xs:annotation>
+                    </xs:enumeration>
+                    <xs:enumeration value="le">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">less than or equals</xs:documentation>
+                        </xs:annotation>
+                    </xs:enumeration>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="grades-nullify-combine-ref-type">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">An operand of a comparison expression pointing to a "combine" node.</xs:documentation>
+        </xs:annotation>
         <xs:attribute name="ref" type="xs:string" use="required">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-              The id of the pointed-at combine node.
-            </xs:documentation>
-          </xs:annotation>
+            <xs:annotation>
+                <xs:documentation xml:lang="en">The id of the pointed-at combine node.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="grades-nullify-test-ref-type">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">An operand of a comparison expression pointing to a "test".</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="ref" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">The id of the pointed-at test.</xs:documentation>
+            </xs:annotation>
         </xs:attribute>
         <xs:attribute name="sub-ref" type="xs:string" use="optional">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-              If the pointed at test exhibits sub test results, this points to one of the sub results.
-              Examples are individual test cases in a unit test specification, individual violation
-              rules in a static code analyzer, individual error classes in a compilation step, etc.
-              Since the sub-ref format or content is test-tool-specific it is not normed in the ProFormA format.
-            </xs:documentation>
-          </xs:annotation>
+            <xs:annotation>
+                <xs:documentation xml:lang="en">If the pointed at test exhibits sub test results, this points to one of the sub results. Examples are individual test cases in a unit test specification, individual violation rules in a static code analyzer, individual error classes in a compilation step, etc. Since the sub-ref format or content is test-tool-specific, it is not normed in the ProFormA format.</xs:documentation>
+            </xs:annotation>
         </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  
-  <xs:complexType name="grades-combine-ref-child-type">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-        A "combine-ref" node points to a "combine" node in the grading scheme hierarchy.
-        As such the result of the pointed at node is obtained and included is a bottom-up fashion
-        in the calculation of the total result.
-      </xs:documentation>
-    </xs:annotation>
-    <xs:complexContent>
-      <xs:extension base="tns:grades-base-ref-child-type">
-        <xs:attribute name="ref" type="xs:string" use="required">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-              The id of the pointed-at combine node.
-            </xs:documentation>
-          </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="grades-nullify-literal-type">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">A numerical constant serving as an operand of the comparison expression.</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="value" type="xs:decimal" use="required">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">A numerical constant value to be compared with.</xs:documentation>
+            </xs:annotation>
         </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  
-  <xs:complexType name="grades-nullify-conditions-type">
-    <xs:sequence>
-      <xs:element name="displaytitle" type="xs:string" minOccurs="0"/>
-      <xs:element name="description" type="tns:description-type" minOccurs="0"/>
-      <xs:element name="internal-description" type="tns:description-type" minOccurs="0"/>
-      <xs:choice minOccurs="2" maxOccurs="unbounded">
-        <xs:element name="nullify-conditions" type="tns:grades-nullify-conditions-type"/>
-        <xs:element name="nullify-condition" type="tns:grades-nullify-condition-type"/>
-      </xs:choice>
-    </xs:sequence>
-    <xs:attribute name="compose-op" use="required">
-      <xs:simpleType>
-        <xs:restriction base="xs:string">
-          <xs:enumeration value="and"/>
-          <xs:enumeration value="or"/>
-        </xs:restriction>
-      </xs:simpleType>
-    </xs:attribute>
-  </xs:complexType>
-
-  <xs:complexType name="grades-nullify-condition-type">
-    <xs:sequence>
-      <xs:element name="displaytitle" type="xs:string" minOccurs="0"/>
-      <xs:element name="description" type="tns:description-type" minOccurs="0"/>
-      <xs:element name="internal-description" type="tns:description-type" minOccurs="0"/>
-      <xs:choice minOccurs="2" maxOccurs="2">
-        <xs:element name="nullify-combine-ref" type="tns:grades-nullify-combine-ref-type"/>
-        <xs:element name="nullify-test-ref" type="tns:grades-nullify-test-ref-type"/>
-        <xs:element name="nullify-literal" type="tns:grades-nullify-literal-type"/>
-      </xs:choice>
-    </xs:sequence>
-    <xs:attribute name="compare-op" use="required">
-      <xs:simpleType>
-        <xs:restriction base="xs:string">
-          <xs:enumeration value="eq"/>
-          <xs:enumeration value="ne"/>
-          <xs:enumeration value="gt"/>
-          <xs:enumeration value="ge"/>
-          <xs:enumeration value="lt"/>
-          <xs:enumeration value="le"/>
-        </xs:restriction>
-      </xs:simpleType>
-    </xs:attribute>
-  </xs:complexType>
-
-  <xs:complexType name="grades-nullify-combine-ref-type">
-    <xs:attribute name="ref" type="xs:string" use="required"/>
-  </xs:complexType>
-
-  <xs:complexType name="grades-nullify-test-ref-type">
-    <xs:attribute name="ref" type="xs:string" use="required"/>
-    <xs:attribute name="sub-ref" type="xs:string" use="optional"/>
-  </xs:complexType>
-
-  <xs:complexType name="grades-nullify-literal-type">
-    <xs:attribute name="value" type="xs:decimal" use="required"/>
-  </xs:complexType>
-  
-  <xs:simpleType name="description-type">
-    <xs:restriction base="xs:string"/>
-  </xs:simpleType>
-  
+    </xs:complexType>
+    <xs:simpleType name="description-type">
+        <xs:restriction base="xs:string" />
+    </xs:simpleType>
 </xs:schema>
