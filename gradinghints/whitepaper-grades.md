@@ -849,17 +849,7 @@ Specifies a simple comparison condition when the sub result of a pointed-at node
     
 ##### Sub elements of the nullify-condition element
 
- - **displaytitle**
-   
-   A title to be displayed when explaining a score nullification to students or teachers. Front ends might decide to explain nullification conditions in a grading scheme even if for a certain submission no nullification took place. An example is given above in the examples section.
-   
- - **description**
- 
-   A detailed description to be displayed when explaining a score nullification. Front ends might decide to extend this description by an automatically generated, human readable version of the involved comparison expression.
-   
- - **internal-description**
- 
-   A detailed description to be displayed to teachers and grading assistants only.
+Besides the elements inherited from the [grades-nullify-base-type](#sub-elements-of-the-grades-nullify-base-type-common-to-nullify-condition-and-nullify-conditions) there are the following additional elements:
 
  - **nullify-combine-ref**
  
