@@ -166,9 +166,9 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    <xs:complexType name="grades-nullify-conditions-type">
+    <xs:complexType name="grades-nullify-base-type">
         <xs:annotation>
-            <xs:documentation xml:lang="en">Specifies a composite condition when the sub result of a pointed-at node should get nullified. The composite condition is attributed with one of the boolean operators { and, or }. Further it contains operands that usually are of the nullify-condition type, which represents a simple comparison. Nevertheless a composite condition can have nested composite conditions as operands as well.</xs:documentation>
+            <xs:documentation xml:lang="en">Specifies an operand of a composite nullify condition.</xs:documentation>
         </xs:annotation>
         <xs:sequence>
             <xs:element name="displaytitle" type="xs:string" minOccurs="0">
@@ -178,7 +178,7 @@
             </xs:element>
             <xs:element name="description" type="tns:description-type" minOccurs="0">
                 <xs:annotation>
-                    <xs:documentation xml:lang="en">A detailed description to be displayed when explaining a score nullification. Front ends might decide to extend this description by an automatically generated, human readable version of the involved boolean expression.</xs:documentation>
+                    <xs:documentation xml:lang="en">A detailed description to be displayed when explaining a score nullification. Front ends might decide to extend this description by an automatically generated, human readable version of the involved boolean or comparison expression.</xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="internal-description" type="tns:description-type" minOccurs="0">
@@ -186,143 +186,160 @@
                     <xs:documentation xml:lang="en">A detailed description to be displayed to teachers and grading assistants only.</xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:choice minOccurs="2" maxOccurs="unbounded">
-                <xs:element name="nullify-conditions" type="tns:grades-nullify-conditions-type">
-                    <xs:annotation>
-                        <xs:documentation xml:lang="en">An operand of the boolean expression, itself being a composite condition.</xs:documentation>
-                    </xs:annotation>
-                </xs:element>
-                <xs:element name="nullify-condition" type="tns:grades-nullify-condition-type">
-                    <xs:annotation>
-                        <xs:documentation xml:lang="en">A simple comparison condition as an operand of the boolean expression.</xs:documentation>
-                    </xs:annotation>
-                </xs:element>
-            </xs:choice>
         </xs:sequence>
-        <xs:attribute name="compose-op" use="required">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">The boolean operator of the boolean expression.</xs:documentation>
-            </xs:annotation>
-            <xs:simpleType>
-                <xs:restriction base="xs:string">
-                    <xs:enumeration value="and" />
-                    <xs:enumeration value="or" />
-                </xs:restriction>
-            </xs:simpleType>
-        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="grades-nullify-conditions-type">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Specifies a composite condition when the sub result of a pointed-at node should get nullified. The composite condition is attributed with one of the boolean operators { and, or }. Further it contains operands that usually are of the nullify-condition type, which represents a simple comparison. Nevertheless a composite condition can have nested composite conditions as operands as well.</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="tns:grades-nullify-base-type">
+                <xs:sequence>
+                    <xs:choice minOccurs="2" maxOccurs="unbounded">
+                        <xs:element name="nullify-conditions" type="tns:grades-nullify-conditions-type">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="en">An operand of the boolean expression, itself being a composite condition.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="nullify-condition" type="tns:grades-nullify-condition-type">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="en">A simple comparison condition as an operand of the boolean expression.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                    </xs:choice>
+                </xs:sequence>
+                <xs:attribute name="compose-op" use="required">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">The boolean operator of the boolean expression.</xs:documentation>
+                    </xs:annotation>
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="and" />
+                            <xs:enumeration value="or" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="grades-nullify-condition-type">
         <xs:annotation>
             <xs:documentation xml:lang="en">Specifies a simple comparison condition when the sub result of a pointed-at node should get nullified. This simple comparison condition is attributed with one of the six common comparison operators. Further it contains operands that refer to tests or combine nodes or that specify a numerical constant, which a result should be compared to.</xs:documentation>
         </xs:annotation>
-        <xs:sequence>
-            <xs:element name="displaytitle" type="xs:string" minOccurs="0">
-                <xs:annotation>
-                    <xs:documentation xml:lang="en">A title to be displayed when explaining a score nullification to students or teachers. Front ends might decide to explain nullification conditions in a grading scheme even if for a certain submission no nullification took place.</xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="description" type="tns:description-type" minOccurs="0">
-                <xs:annotation>
-                    <xs:documentation xml:lang="en">A detailed description to be displayed when explaining a score nullification. Front ends might decide to extend this description by an automatically generated, human readable version of the involved comparison expression.</xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="internal-description" type="tns:description-type" minOccurs="0">
-                <xs:annotation>
-                    <xs:documentation xml:lang="en">A detailed description to be displayed to teachers and grading assistants only.</xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:choice minOccurs="2" maxOccurs="2">
-                <xs:element name="nullify-combine-ref" type="tns:grades-nullify-combine-ref-type">
+        <xs:complexContent>
+            <xs:extension base="tns:grades-nullify-base-type">
+                <xs:sequence>
+                    <xs:choice minOccurs="2" maxOccurs="2">
+                        <xs:element name="nullify-combine-ref" type="tns:grades-nullify-combine-ref-type">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="en">An operand of the comparison expression pointing to a "combine" node. When evaluating the condition, the numerical score calculated for the referenced combine node will be used as an operand in comparison.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="nullify-test-ref" type="tns:grades-nullify-test-ref-type">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="en">An operand of the comparison expression pointing to a "test". When evaluating the condition, the numerical score delivered by the referenced test will be used as an operand in comparison.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="nullify-literal" type="tns:grades-nullify-literal-type">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="en">A numerical constant serving as an operand of the comparison expression. The constant is specified as a "value" attribute in the nullify-literal element.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                    </xs:choice>
+                </xs:sequence>
+                <xs:attribute name="compare-op" use="required">
                     <xs:annotation>
-                        <xs:documentation xml:lang="en">An operand of the comparison expression pointing to a "combine" node. When evaluating the condition, the numerical score calculated for the referenced combine node will be used as an operand in comparison.</xs:documentation>
+                        <xs:documentation xml:lang="en">The comparison operator of the comparison expression.</xs:documentation>
                     </xs:annotation>
-                </xs:element>
-                <xs:element name="nullify-test-ref" type="tns:grades-nullify-test-ref-type">
-                    <xs:annotation>
-                        <xs:documentation xml:lang="en">An operand of the comparison expression pointing to a "test". When evaluating the condition, the numerical score delivered by the referenced test will be used as an operand in comparison.</xs:documentation>
-                    </xs:annotation>
-                </xs:element>
-                <xs:element name="nullify-literal" type="tns:grades-nullify-literal-type">
-                    <xs:annotation>
-                        <xs:documentation xml:lang="en">A numerical constant serving as an operand of the comparison expression. The constant is specified as a "value" attribute in the nullify-literal element.</xs:documentation>
-                    </xs:annotation>
-                </xs:element>
-            </xs:choice>
-        </xs:sequence>
-        <xs:attribute name="compare-op" use="required">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">The comparison operator of the comparison expression.</xs:documentation>
-            </xs:annotation>
-            <xs:simpleType>
-                <xs:restriction base="xs:string">
-                    <xs:enumeration value="eq">
-                        <xs:annotation>
-                            <xs:documentation xml:lang="en">equals</xs:documentation>
-                        </xs:annotation>
-                    </xs:enumeration>
-                    <xs:enumeration value="ne">
-                        <xs:annotation>
-                            <xs:documentation xml:lang="en">not equals</xs:documentation>
-                        </xs:annotation>
-                    </xs:enumeration>
-                    <xs:enumeration value="gt">
-                        <xs:annotation>
-                            <xs:documentation xml:lang="en">greater than</xs:documentation>
-                        </xs:annotation>
-                    </xs:enumeration>
-                    <xs:enumeration value="ge">
-                        <xs:annotation>
-                            <xs:documentation xml:lang="en">greater than or equals</xs:documentation>
-                        </xs:annotation>
-                    </xs:enumeration>
-                    <xs:enumeration value="lt">
-                        <xs:annotation>
-                            <xs:documentation xml:lang="en">less than</xs:documentation>
-                        </xs:annotation>
-                    </xs:enumeration>
-                    <xs:enumeration value="le">
-                        <xs:annotation>
-                            <xs:documentation xml:lang="en">less than or equals</xs:documentation>
-                        </xs:annotation>
-                    </xs:enumeration>
-                </xs:restriction>
-            </xs:simpleType>
-        </xs:attribute>
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="eq">
+                                <xs:annotation>
+                                    <xs:documentation xml:lang="en">equals</xs:documentation>
+                                </xs:annotation>
+                            </xs:enumeration>
+                            <xs:enumeration value="ne">
+                                <xs:annotation>
+                                    <xs:documentation xml:lang="en">not equals</xs:documentation>
+                                </xs:annotation>
+                            </xs:enumeration>
+                            <xs:enumeration value="gt">
+                                <xs:annotation>
+                                    <xs:documentation xml:lang="en">greater than</xs:documentation>
+                                </xs:annotation>
+                            </xs:enumeration>
+                            <xs:enumeration value="ge">
+                                <xs:annotation>
+                                    <xs:documentation xml:lang="en">greater than or equals</xs:documentation>
+                                </xs:annotation>
+                            </xs:enumeration>
+                            <xs:enumeration value="lt">
+                                <xs:annotation>
+                                    <xs:documentation xml:lang="en">less than</xs:documentation>
+                                </xs:annotation>
+                            </xs:enumeration>
+                            <xs:enumeration value="le">
+                                <xs:annotation>
+                                    <xs:documentation xml:lang="en">less than or equals</xs:documentation>
+                                </xs:annotation>
+                            </xs:enumeration>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="grades-nullify-comparison-operand-type">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Specifies an operand of a comparison nullify condition.</xs:documentation>
+        </xs:annotation>
     </xs:complexType>
     <xs:complexType name="grades-nullify-combine-ref-type">
         <xs:annotation>
             <xs:documentation xml:lang="en">An operand of a comparison expression pointing to a "combine" node.</xs:documentation>
         </xs:annotation>
-        <xs:attribute name="ref" type="xs:string" use="required">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">The id of the pointed-at combine node.</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
+        <xs:complexContent>
+            <xs:extension base="tns:grades-nullify-comparison-operand-type">
+                <xs:attribute name="ref" type="xs:string" use="required">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">The id of the pointed-at combine node.</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="grades-nullify-test-ref-type">
         <xs:annotation>
             <xs:documentation xml:lang="en">An operand of a comparison expression pointing to a "test".</xs:documentation>
         </xs:annotation>
-        <xs:attribute name="ref" type="xs:string" use="required">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">The id of the pointed-at test.</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="sub-ref" type="xs:string" use="optional">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">If the pointed at test exhibits sub test results, this points to one of the sub results. Examples are individual test cases in a unit test specification, individual violation rules in a static code analyzer, individual error classes in a compilation step, etc. Since the sub-ref format or content is test-tool-specific, it is not normed in the ProFormA format.</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
+        <xs:complexContent>
+            <xs:extension base="tns:grades-nullify-comparison-operand-type">
+                <xs:attribute name="ref" type="xs:string" use="required">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">The id of the pointed-at test.</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="sub-ref" type="xs:string" use="optional">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">If the pointed at test exhibits sub test results, this points to one of the sub results. Examples are individual test cases in a unit test specification, individual violation rules in a static code analyzer, individual error classes in a compilation step, etc. Since the sub-ref format or content is test-tool-specific, it is not normed in the ProFormA format.</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="grades-nullify-literal-type">
         <xs:annotation>
             <xs:documentation xml:lang="en">A numerical constant serving as an operand of the comparison expression.</xs:documentation>
         </xs:annotation>
-        <xs:attribute name="value" type="xs:decimal" use="required">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">A numerical constant value to be compared with.</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
+        <xs:complexContent>
+            <xs:extension base="tns:grades-nullify-comparison-operand-type">
+                <xs:attribute name="value" type="xs:decimal" use="required">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">A numerical constant value to be compared with.</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
     <xs:simpleType name="description-type">
         <xs:restriction base="xs:string" />

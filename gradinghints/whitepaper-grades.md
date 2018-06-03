@@ -34,6 +34,7 @@ ProFormA programming tasks can be assigned a grading scheme with the so-called *
       - [Specific sub elements of the test-ref element](#specific-sub-elements-of-the-test-ref-element)
       - [Specific attributes of the test-ref element](#specific-attributes-of-the-test-ref-element)
     + [nullify-conditions](#nullify-conditions)
+      - [Sub elements of the grades-nullify-base-type common to "nullify-condition" and "nullify-conditions"](#sub-elements-of-the-grades-nullify-base-type-common-to-nullify-condition-and-nullify-conditions)
       - [Sub elements of the nullify-conditions element](#sub-elements-of-the-nullify-conditions-element)
       - [Attributes of the nullify-conditions element](#attributes-of-the-nullify-conditions-element)
     + [nullify-condition (without s)](#nullify-condition-without-s)
@@ -687,8 +688,6 @@ We first discuss the common elements of both kinds of pointers.
  
    Specifies a weight that is multiplied to the sub result of the pointed-at node when flowing into the accumulator function. The pointed-at node is a test or a combine node. When calculating the condensed result for the pointing-from node, the score of the pointed-at node is multiplied by the weight, if present. Otherwise nothing is multiplied. A special case is together with the accumulator function _avg_ where possibly attributed weights are completely ignored.
 
- - **weight**
- 
       
 ##### Specific sub elements of the combine-ref element
 
@@ -732,27 +731,36 @@ Currently there are no specific sub elements in a combine-ref element.
 
 A \<nullify-conditions\> element specifies a composite condition when the sub result of a pointed-at node should get nullified. The composite condition is attributed with one of the boolean operators { and, or }. Further it contains operands that usually are of the nullify-condition type, which represents a simple comparison. Nevertheless a composite condition can have nested composite conditions as operands as well.
 
-    <xs:complexType name="grades-nullify-conditions-type">
+    <xs:complexType name="grades-nullify-base-type">
         <xs:sequence>
             <xs:element name="displaytitle" type="xs:string" minOccurs="0" />
             <xs:element name="description" type="tns:description-type" minOccurs="0" />
             <xs:element name="internal-description" type="tns:description-type" minOccurs="0" />
-            <xs:choice minOccurs="2" maxOccurs="unbounded">
-                <xs:element name="nullify-conditions" type="tns:grades-nullify-conditions-type" />
-                <xs:element name="nullify-condition" type="tns:grades-nullify-condition-type" />
-            </xs:choice>
         </xs:sequence>
-        <xs:attribute name="compose-op" use="required">
-            <xs:simpleType>
-                <xs:restriction base="xs:string">
-                    <xs:enumeration value="and" />
-                    <xs:enumeration value="or" />
-                </xs:restriction>
-            </xs:simpleType>
-        </xs:attribute>
     </xs:complexType>
+    <xs:complexType name="grades-nullify-conditions-type">
+        <xs:complexContent>
+            <xs:extension base="tns:grades-nullify-base-type">
+                <xs:sequence>
+                    <xs:choice minOccurs="2" maxOccurs="unbounded">
+                        <xs:element name="nullify-conditions" type="tns:grades-nullify-conditions-type" />
+                        <xs:element name="nullify-condition" type="tns:grades-nullify-condition-type" />
+                    </xs:choice>
+                </xs:sequence>
+                <xs:attribute name="compose-op" use="required">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="and" />
+                            <xs:enumeration value="or" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    
 
-##### Sub elements of the nullify-conditions element
+##### Sub elements of the grades-nullify-base-type common to "nullify-condition" and "nullify-conditions"
 
  - **displaytitle**
    
@@ -766,6 +774,8 @@ A \<nullify-conditions\> element specifies a composite condition when the sub re
  
    A detailed description to be displayed to teachers and grading assistants only.
 
+##### Sub elements of the nullify-conditions element
+   
  - **nullify-conditions**
  
    An operand of the boolean expression, itself being a composite condition.
@@ -787,38 +797,53 @@ A \<nullify-conditions\> element specifies a composite condition when the sub re
 Specifies a simple comparison condition when the sub result of a pointed-at node should get nullified. This simple comparison condition is [attributed with one of the six common comparison operators](#attributes-of-the-nullify-condition-element). Further it contains operands that refer to [tests](#the-nullify-test-ref-element) or [combine nodes](#the-nullify-combine-ref-element) or that specify a [numerical constant](#the-nullify-literal-element), which a result should be compared to.
 
     <xs:complexType name="grades-nullify-condition-type">
-        <xs:sequence>
-            <xs:element name="displaytitle" type="xs:string" minOccurs="0" />
-            <xs:element name="description" type="tns:description-type" minOccurs="0" />
-            <xs:element name="internal-description" type="tns:description-type" minOccurs="0" />
-            <xs:choice minOccurs="2" maxOccurs="2">
-                <xs:element name="nullify-combine-ref" type="tns:grades-nullify-combine-ref-type" />
-                <xs:element name="nullify-test-ref" type="tns:grades-nullify-test-ref-type" />
-                <xs:element name="nullify-literal" type="tns:grades-nullify-literal-type" />
-            </xs:choice>
-        </xs:sequence>
-        <xs:attribute name="compare-op" use="required">
-            <xs:simpleType>
-                <xs:restriction base="xs:string">
-                    <xs:enumeration value="eq" />
-                    <xs:enumeration value="ne" />
-                    <xs:enumeration value="gt" />
-                    <xs:enumeration value="ge" />
-                    <xs:enumeration value="lt" />
-                    <xs:enumeration value="le" />
-                </xs:restriction>
-            </xs:simpleType>
-        </xs:attribute>
+        <xs:complexContent>
+            <xs:extension base="tns:grades-nullify-base-type">
+                <xs:sequence>
+                    <xs:choice minOccurs="2" maxOccurs="2">
+                        <xs:element name="nullify-combine-ref" type="tns:grades-nullify-combine-ref-type" />
+                        <xs:element name="nullify-test-ref" type="tns:grades-nullify-test-ref-type" />
+                        <xs:element name="nullify-literal" type="tns:grades-nullify-literal-type" />
+                    </xs:choice>
+                </xs:sequence>
+                <xs:attribute name="compare-op" use="required">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="eq" />
+                            <xs:enumeration value="ne" />
+                            <xs:enumeration value="gt" />
+                            <xs:enumeration value="ge" />
+                            <xs:enumeration value="lt" />
+                            <xs:enumeration value="le" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="grades-nullify-comparison-operand-type">
     </xs:complexType>
     <xs:complexType name="grades-nullify-combine-ref-type">
-        <xs:attribute name="ref" type="xs:string" use="required" />
+        <xs:complexContent>
+            <xs:extension base="tns:grades-nullify-comparison-operand-type">
+                <xs:attribute name="ref" type="xs:string" use="required" />
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="grades-nullify-test-ref-type">
-        <xs:attribute name="ref" type="xs:string" use="required" />
-        <xs:attribute name="sub-ref" type="xs:string" use="optional" />
+        <xs:complexContent>
+            <xs:extension base="tns:grades-nullify-comparison-operand-type">
+                <xs:attribute name="ref" type="xs:string" use="required" />
+                <xs:attribute name="sub-ref" type="xs:string" use="optional" />
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="grades-nullify-literal-type">
-        <xs:attribute name="value" type="xs:decimal" use="required" />
+        <xs:complexContent>
+            <xs:extension base="tns:grades-nullify-comparison-operand-type">
+                <xs:attribute name="value" type="xs:decimal" use="required" />
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
 
     
@@ -893,4 +918,3 @@ The nullify-literal element represents a numerical constant serving as an operan
  
    A numerical constant value to be compared with.
 
-   
