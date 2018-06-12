@@ -49,7 +49,8 @@ ProFormA programming tasks can be assigned a grading scheme with the so-called *
 ### TODOs
 
  - [ ] check reference to Appendix A in [description element](#description-and-internal-description-elements)
- 
+ - [ ] In order to reuse a task in different courses, it would be beneficial to scale a given grading scheme to a desired maximum score. Instead of cloning the complete grading scheme, looping through all nodes, scaling each single weight, and then submitting the cloned grading scheme as part of the submission format, it could be easier, to submit the original grading scheme together with a scaling factor. 
+ - [ ] Somewhat connected: Do all tests and sub-tests produce scores between [0,1]? 
 
 
 ### Abstract
@@ -237,9 +238,9 @@ Let's build upon the [previous example](#example-2-a-hierarchy-of-sub-results). 
 </tns:grading-hints>
 ```
 
-This way we attached a nullify condition to the tree edge between the ``root`` node and the ``advanced`` node. If the nullify condition evaluates to _true_, then the respective subresult for the subtree rooted at ``advanced`` is assumed 0. Looking at the specified condition in detail, the author requires an intermediate score of at most (``le`` = *l*ess than or *e*quals) 0.8 at the ``basic`` node. Our example submission reached 0.62, i. e. this submission would get nullified in advanced aspects.
+This way we attached a nullify condition to the tree edge between the ``root`` node and the ``advanced`` node. If the nullify condition evaluates to _true_, then the respective subresult for the subtree rooted at ``advanced`` is assumed 0. Looking at the specified condition in detail, the author wants to nullify the ``advanced`` score, when the ``basic`` score is at most (``le`` = *l*ess than or *e*quals) 0.8. Our example submission reached 0.62, i. e. this submission would get nullified in advanced aspects.
 
-The nullify condition extends the topology by an arrow from ``basic`` to the edge at the upper right as shown in the following graphic:
+The nullify condition extends the topology by an arrow from the edge at the upper right to ``basic`` as shown in the following graphic:
 
                              +--------+
                +-------------+  root  +------------+
@@ -340,7 +341,7 @@ A caveat: The labels ``tc.a`` and ``tc.b`` are specific to the test tool. The pr
 
 #### Example 5. Combining sub tests and nullify conditions
 
-An author can combine sub test references and test references. As an example we extend the [previous example](#example-4-referencing-tests-and-sub-tests). The author wants to nullify the score from the compilation test when all unit test cases miss the bar "0.5". For this in the following example the author adds one additional ``combine`` node labeld ``test2.max`` expressing the maximum of all unit test cases. With the new ``test2.max`` node it is easy to nullify the ``test1`` result, if the ``test2.max`` value is less than 0.5:
+An author can combine sub test references and nullifications. As an example we extend the [previous example](#example-4-referencing-tests-and-sub-tests). The author wants to nullify the score from the compilation test when all unit test cases miss the bar "0.5". For this in the following example the author adds one additional ``combine`` node labeld ``test2.max`` expressing the maximum of all unit test cases. With the new ``test2.max`` node it is easy to nullify the ``test1`` result, if the ``test2.max`` value is less than 0.5:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
