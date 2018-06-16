@@ -49,7 +49,6 @@ ProFormA programming tasks can be assigned a grading scheme with the so-called *
 ### TODOs
 
  - [ ] check reference to Appendix A in [description element](#description-and-internal-description-elements)
- - [ ] In order to reuse a task in different courses, it would be beneficial to scale a given grading scheme to a desired maximum score. A LMS can do so by by cloning the complete grading scheme and by looping through the children below the root node, scaling each single weight, and then submitting the cloned grading scheme as part of the submission format. But: If the task's grading scheme uses function=avg at the root node, then there are no weights at all! So: we should eliminate avg as a function, since it easily can be replaced by a weighted sum.
 
 
 ### Abstract
@@ -110,7 +109,7 @@ The titles _Compilation_, _Unit test_, etc. are assumed to be specified in the \
 
 A tabular representation might even be clearer but lacks the possibility of including detailed feedback directly below the quantitative result. Instead a front end could provide info links to detailed textual feedback:
 
-![Feedback for example 1a rendered in a rich formatting language like HTML using colspan, rowspan and background colors](images/whitepaper-grades-example-img-1.png){ width=600px }
+![Feedback for example 1a rendered in a rich formatting language like HTML using colspan, rowspan and background colors](images/whitepaper-grades-example-img-1.png)
 
 The small info icons could be clickable links that show a popup or that route the user to an anchor in a large HTML document.
 
@@ -136,13 +135,13 @@ This specifies a weighted sum out of all test-generated scores. The weights have
 
 A front end might present a result like this:
 
-![Feedback for example 1b](images/whitepaper-grades-example-img-2.png){ width=600px }
+![Feedback for example 1b](images/whitepaper-grades-example-img-2.png)
 
 Note the additional rows with information about the factors and the intermediate results chained from left to right with the rightmost number being the final result for the respective aspect. The additional rows could be shown by a frontend on demand, when the user wishes to "expand" one of the four result rows.
 
 It should be noted, that often a teacher wants to adapt the maximum score of a task so as to balance the scores between the many tasks in a specific course. The front end might ask the teacher for the desired maximum score and store that score together with the task's grading-hints. A specific student submission's grading result can be _scaled_ by the frontend to the desired target score in different ways. Possibly the best option is to scale every test result score. In order to get a meaningful tabular summary, the front end should output scaled weights for the test results. Another option is that of multiplying the overall result by a scaling factor. The following table shows an example of the first option:
 
-![Scaled feedback for example 1b](images/whitepaper-grades-example-img-7.png){ width=600px }
+![Scaled feedback for example 1b](images/whitepaper-grades-example-img-7.png)
 
 
 #### Example 2. A hierarchy of sub results
@@ -186,7 +185,7 @@ The above grading prescription defines a tree consisting of three inner nodes an
     
 The inner nodes at the medium level are ``combine`` nodes that define an accumulator function like sum, min, or max. Every node except the root can define a weight that will be multiplied when accumulating the result of that node to its parent node. Leave nodes are referring tests. In order to allow labeling of intermediate results at inner nodes, every inner node may get a ``displaytitle`` element. A front-end could present a result for this grading scheme in tabular form like this:
 
-![Feedback for example 2](images/whitepaper-grades-example-img-3.png){ width=600px }
+![Feedback for example 2](images/whitepaper-grades-example-img-3.png)
 
 
 #### Example 3. Conditionally nullify scores
@@ -239,7 +238,7 @@ The nullify condition extends the topology by an arrow from the edge at the uppe
 
 A possible presentation of a submission result is the following, which deviates from the previous one in the "Advanced aspects" row: 
 
-![Feedback for example 3](images/whitepaper-grades-example-img-4.png){ width=600px }
+![Feedback for example 3](images/whitepaper-grades-example-img-4.png)
 
 In the cell with the _Advanced aspects_'s score the nullification could be represented by an intermediate calculation step in the &#9654; chain. The submitter gets a detailed, automatically generated explanation in the "Score is calculated ..." section.
 
@@ -293,7 +292,7 @@ The following illustrates the topology of this grading scheme:
 
 The front end representation of a submission result depicts the specific sub test titles:
 
-![Feedback for example 4](images/whitepaper-grades-example-img-5.png){ width=600px }
+![Feedback for example 4](images/whitepaper-grades-example-img-5.png)
 
 A caveat: The labels ``tc.a`` and ``tc.b`` are specific to the test tool. The proposed grading scheme assumes, that the test tool provides an indexed result such that when calculating grades we can randomly access each sub result. Since the grading scheme hard-codes test-tool-specific sub-result-labels, such a grading scheme has a lower chance to be exchanged between graders, especially between different test tool backends.
 
@@ -357,7 +356,7 @@ The topology shows the following graphic. There is a node ``test.max`` not conne
 
 A possible representation in a front end is as follows. It does deviate from the previous one in the "Compilation" row:
 
-![Feedback for example 5](images/whitepaper-grades-example-img-6.png){ width=600px }
+![Feedback for example 5](images/whitepaper-grades-example-img-6.png)
 
 The Compilation Score does not get nullified, because the maximum of tc.a and tc.b scores is \>= 0.5. The user gets the following, automatically generated explanation: 
 
