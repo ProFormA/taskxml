@@ -49,17 +49,16 @@ ProFormA programming tasks can be assigned a grading scheme with the so-called *
 ### TODOs
 
  - [ ] check reference to Appendix A in [description element](#description-and-internal-description-elements)
- - [ ] In order to reuse a task in different courses, it would be beneficial to scale a given grading scheme to a desired maximum score. Instead of cloning the complete grading scheme, looping through all nodes, scaling each single weight, and then submitting the cloned grading scheme as part of the submission format, it could be easier, to submit the original grading scheme together with a scaling factor. 
- - [ ] Somewhat connected: Do all tests and sub-tests produce scores between [0,1]? 
+ - [ ] In order to reuse a task in different courses, it would be beneficial to scale a given grading scheme to a desired maximum score. A LMS can do so by by cloning the complete grading scheme and by looping through the children below the root node, scaling each single weight, and then submitting the cloned grading scheme as part of the submission format. But: If the task's grading scheme uses function=avg at the root node, then there are no weights at all! So: we should eliminate avg as a function, since it easily can be replaced by a weighted sum.
 
 
 ### Abstract
 
-A grading-hints section of a ProFormA task obtains scores from tests. Most ProFormA tasks define more than one test. Every test in a ProFormA task is expected to generate a score. If a test doesn't generate a score, it will at least generate some output like *passed* or *failed*. Such a binary output can be mapped automatically to values 1 or 0 respectively by graders that support the grading-hints schema. The grading-hints schema is designed to describe, how a grader should calculate a total result from the individual test results.
+A grading-hints section of a ProFormA task obtains scores from tests. Most ProFormA tasks define more than one test. Every test in a ProFormA task is expected to generate a score from the interval [0,1]. If a test doesn't generate a score, it will at least generate some output like *passed* or *failed*. Such a binary output can be mapped automatically to values 1 or 0 respectively by graders that support the grading-hints schema. The grading-hints schema is designed to describe, how a grader should calculate a total result from the individual test results.
 
 In fact, many test tools do not generate a single score. E. g. a unit test tool usually executes several test cases for a given task where each test case reports an individual result. In a simple but useful setting, a grader receives a log dump from the test tool that lists all individual test case result. The log dump usually includes an overall *passed* classification if and only if all test cases passed. In a simple setting, the task author takes that overall classification as a single score per test. With this, the author defines a task's grading-hints as a calculation rule based on one score per test.
 
-Nevertheless, the grading-hints element described in this chapter is also capable of calculating a total grading result out of individual test *case* results. For this, so-called *sub test results" may be referenced and included in a calculation rule.
+Nevertheless, the grading-hints element described in this chapter is also capable of calculating a total grading result out of individual test *case* results. For this, so-called *sub test results" may be referenced and included in a calculation rule. Everey sub test result is expected in the interval [0,1].
 
 Last but not least, the grading-hints element can define so-called "nullifications". E. g. if the unit test tool reports less than p % of all test cases successful, then a task author might decide not to credit any score for a successfull compilation. If instead at least p % of all test cases passed, the grading-hints could include e. g. a fixed additional score for successful compilation. This way, students cannot "steal" points for compilation by submitting a nearly empty program file. A major design goal for nullifications was, that a student facing a grading result understands the result's calculation mechanics easily.
 
@@ -85,7 +84,7 @@ A typical simple example is as follows:
 </tns:grading-hints>
 ```
 
-The above simple example calculates the sum of all test-generated scores. From this a grader could produce a scoring result for students like the following:
+The above simple example calculates the sum of all test-generated score. From this a grader could produce a scoring result for students like the following:
 
 > Your grade result is composed of several test results:
 >
@@ -97,7 +96,7 @@ The above simple example calculates the sum of all test-generated scores. From t
 >   
 >     \<textual feedback\>
 >         
->   * PMD (test3). Score achieved: 0.4 
+>   * PMD (test3). Score achieved: 0.4
 >   
 >     \<textual feedback\>
 >         
@@ -109,19 +108,13 @@ The above simple example calculates the sum of all test-generated scores. From t
 
 The titles _Compilation_, _Unit test_, etc. are assumed to be specified in the \<tests\> section of a ProFormA task. The test id printed in parentheses usually would not be included in the report. It is only included in this whitepaper to make the report structure clear.
 
-A tabular representation might even be clearer but lacks the possibility of including detailed feedback directly below the quantitative result. Instead a front end could provide links to detailed textual feedback:
+A tabular representation might even be clearer but lacks the possibility of including detailed feedback directly below the quantitative result. Instead a front end could provide info links to detailed textual feedback:
 
-> |         | <- Aspect    |         Score -> |               | 
-> |---------|:-------------|-----------------:|--------------:|
-> | _Total_ |              |                  | _Total Score_ |
-> | Sum of  | Compilation  | 1.00 __details__ |               | 
-> |         | Unit test    | 0.45 __details__ |               | 
-> |         | PMD          | 0.40 __details__ |               | 
-> |         | Checkstyle   | 0.90 __details__ |      **2.75** | 
+![Feedback for example 1a rendered in a rich formatting language like HTML using colspan, rowspan and background colors](images/whitepaper-grades-example-img-1.png){ width=600px }
 
-The **details** could be clickable links that show a popup or that route the user to an anchor in a large HTML document.
+The small info icons could be clickable links that show a popup or that route the user to an anchor in a large HTML document.
 
-Last but not least, a front end could combine both approaches: a tabular representation for an overview and the bullet point list for the details. The __details__ links in the table could lead the user directly to the respective section in the bullet point list.
+Last but not least, a front end could combine both approaches: a tabular representation for an overview and the bullet point list for the details. The info links in the table could lead the user directly to the respective section in the bullet point list.
 
 #### Example 1b. Weighted sub results
 
@@ -143,15 +136,14 @@ This specifies a weighted sum out of all test-generated scores. The weights have
 
 A front end might present a result like this:
 
-> |                 |        | <- Aspect    |         Score -> |               | 
-> |-----------------|-------:|:-------------|-----------------:|--------------:|
-> | _Total_         |        |              |                  | _Total Score_ |
-> | Weighted sum of | x 0.33 | Compilation  | 1.00 __details__ |               | 
-> |                 | x 0.20 | Unit test    | 0.45 __details__ |               | 
-> |                 | x 0.17 | PMD          | 0.40 __details__ |               | 
-> |                 | x 0.30 | Checkstyle   | 0.90 __details__ |      **0.76** | 
+![Feedback for example 1b](images/whitepaper-grades-example-img-2.png){ width=600px }
 
-Note the additional column with factors (marked with the multiplication sign "x") and the term _Weighted Sum_ in the left column.
+Note the additional rows with information about the factors and the intermediate results chained from left to right with the rightmost number being the final result for the respective aspect. The additional rows could be shown by a frontend on demand, when the user wishes to "expand" one of the four result rows.
+
+It should be noted, that often a teacher wants to adapt the maximum score of a task so as to balance the scores between the many tasks in a specific course. The front end might ask the teacher for the desired maximum score and store that score together with the task's grading-hints. A specific student submission's grading result can be _scaled_ by the frontend to the desired target score in different ways. Possibly the best option is to scale every test result score. In order to get a meaningful tabular summary, the front end should output scaled weights for the test results. Another option is that of multiplying the overall result by a scaling factor. The following table shows an example of the first option:
+
+![Scaled feedback for example 1b](images/whitepaper-grades-example-img-7.png){ width=600px }
+
 
 #### Example 2. A hierarchy of sub results
 
@@ -192,21 +184,10 @@ The above grading prescription defines a tree consisting of three inner nodes an
     | test1 |   | test2 |       | test3 |   | test4 |
     +-------+   +-------+       +-------+   +-------+
     
-The inner nodes at the medium level are ``combine`` nodes that define an accumulator function like sum, min, max or avg. Every node except the root can define a weight that will be multiplied when accumulating the result of that node to its parent node. Leave nodes are referring tests. In order to allow labeling of intermediate results at inner nodes, every inner node may get a ``displaytitle`` element. A front-end could present a result for this grading scheme in tabular form like this:
+The inner nodes at the medium level are ``combine`` nodes that define an accumulator function like sum, min, or max. Every node except the root can define a weight that will be multiplied when accumulating the result of that node to its parent node. Leave nodes are referring tests. In order to allow labeling of intermediate results at inner nodes, every inner node may get a ``displaytitle`` element. A front-end could present a result for this grading scheme in tabular form like this:
 
-> |                 |        |                    |        | <- Aspect   |         Score -> |                           |                |
-> |-----------------|-------:|--------------------|-------:|-------------|-----------------:|--------------------------:|---------------:|
-> | _Total_         |        |                    |        |             |                  |                           |  _Total Score_ |
-> | Weighted sum of | x 0.75 | _Basic aspects_    |        |             |                  |     _Basic aspects Score_ |                |
-> |                 |        | Weighted sum of    | x 0.30 | Compilation | 1.00 __details__ |                           |                |
-> |                 |        |                    | x 0.70 | Unit test   | 0.45 __details__ |                      0.62 |                |
-> |                 | x 0.25 | _Advanced aspects_ |        |             |                  |  _Advanced aspects Score_ |                |
-> |                 |        | Minimum of         |        | PMD         | 0.40 __details__ |                           |                |
-> |                 |        |                    |        | Checkstyle  | 0.90 __details__ |                      0.40 |       **0.56** |
+![Feedback for example 2](images/whitepaper-grades-example-img-3.png){ width=600px }
 
-In a rich formatting language like HTML there would be more formatting options than in markdown. E. g. a ``colspan`` around the four cells heading east starting from _Basic aspects_ or from _Advanced aspects_ would make relationships clear. Also a ``rowspan`` around the six cells heading south starting from the upper left _Weighted sum of_ cell would work out clearly the extent of the weighted sum. An example look is given in the following image or in the file ``images/whitepaper-grades-img1.png``:
-
-![The above table rendered in a rich formatting language like HTML using colspan, rowspan and background colors](images/whitepaper-grades-img1.png)
 
 #### Example 3. Conditionally nullify scores
 
@@ -238,7 +219,7 @@ Let's build upon the [previous example](#example-2-a-hierarchy-of-sub-results). 
 </tns:grading-hints>
 ```
 
-This way we attached a nullify condition to the tree edge between the ``root`` node and the ``advanced`` node. If the nullify condition evaluates to _true_, then the respective subresult for the subtree rooted at ``advanced`` is assumed 0. Looking at the specified condition in detail, the author wants to nullify the ``advanced`` score, when the ``basic`` score is at most (``le`` = *l*ess than or *e*quals) 0.8. Our example submission reached 0.62, i. e. this submission would get nullified in advanced aspects.
+This way we attached a nullify condition to the tree edge between the ``root`` node and the ``advanced`` node. If the nullify condition evaluates to _true_, then the respective subresult for the subtree rooted at ``advanced`` is assumed 0. Looking at the specified condition in detail, the author wants to nullify the ``advanced`` score, when the unweighted ``basic`` score is at most (``le`` = *l*ess than or *e*quals) 0.8. Our example submission reached 0.62, i. e. this submission would get nullified in advanced aspects.
 
 The nullify condition extends the topology by an arrow from the edge at the upper right to ``basic`` as shown in the following graphic:
 
@@ -256,23 +237,11 @@ The nullify condition extends the topology by an arrow from the edge at the uppe
     | test1 |   | test2 |                 | test3 |   | test4 |
     +-------+   +-------+                 +-------+   +-------+
 
-A possible presentation of a submission result is the following, which deviates from the previous example in the last row in the two right-most columns: 
+A possible presentation of a submission result is the following, which deviates from the previous one in the "Advanced aspects" row: 
 
+![Feedback for example 3](images/whitepaper-grades-example-img-4.png){ width=600px }
 
-> |                 |        |                    |        | <- Aspect   |         Score -> |                           |                |
-> |-----------------|-------:|--------------------|-------:|-------------|-----------------:|--------------------------:|---------------:|
-> | _Total_         |        |                    |        |             |                  |                           |  _Total Score_ |
-> | Weighted sum of | x 0.75 | _Basic aspects_    |        |             |                  |     _Basic aspects Score_ |                |
-> |                 |        | Weighted sum of    | x 0.30 | Compilation | 1.00 __details__ |                           |                |
-> |                 |        |                    | x 0.70 | Unit test   | 0.45 __details__ |                      0.62 |                |
-> |                 | x 0.25 | _Advanced aspects_ |        |             |                  |  _Advanced aspects Score_ |                |
-> |                 |        | Minimum of         |        | PMD         | 0.40 __details__ |                           |                |
-> |                 |        |                    |        | Checkstyle  | 0.90 __details__ |  0.40 -> 0.00 __details__ |       **0.46** |
-
-
-In the cell with the _Advanced aspects_'s score the nullification could be represented by an arrow. The submitter could get a detailed explanation by clicking on _details_. The explanation could even be generated automatically like 
-
-> When calculating the _Total Score_ your _Advanced aspects Score_ was nullified. Reason: _Basic aspects_ should be \> 0.8, but was 0.62.
+In the cell with the _Advanced aspects_'s score the nullification could be represented by an intermediate calculation step in the &#9654; chain. The submitter gets a detailed, automatically generated explanation in the "Score is calculated ..." section.
 
 The grading-hints schema allows nullification with a simple comparison like above using any of the common numerical comparators. Also an author can build composite conditions by combing simple conditions in an and-or-tree.
 
@@ -324,19 +293,8 @@ The following illustrates the topology of this grading scheme:
 
 The front end representation of a submission result depicts the specific sub test titles:
 
-> |                 |        |                    |        | <- Aspect           |         Score -> |                           |                |
-> |-----------------|-------:|--------------------|-------:|---------------------|-----------------:|--------------------------:|---------------:|
-> | _Total_         |        |                    |        |                     |                  |                           |  _Total Score_ |
-> | Weighted sum of | x 0.75 | _Basic aspects_    |        |                     |                  |     _Basic aspects Score_ |                |
-> |                 |        | Weighted sum of    | x 0.30 | Compilation         | 1.00 __details__ |                           |                |
-> |                 |        |                    | x 0.70 | Unit test, aspect A | 0.15 __details__ |                      0.41 |                |
-> |                 | x 0.25 | _Advanced aspects_ |        |                     |                  |  _Advanced aspects Score_ |                |
-> |                 |        | Minimum of         |        | Unit test, aspect B | 0.75 __details__ |                           |                |
-> |                 |        |                    |        | PMD                 | 0.40 __details__ |                           |                |
-> |                 |        |                    |        | Checkstyle          | 0.90 __details__ |                      0.40 |       **0.40** |
-    
-    
-    
+![Feedback for example 4](images/whitepaper-grades-example-img-5.png){ width=600px }
+
 A caveat: The labels ``tc.a`` and ``tc.b`` are specific to the test tool. The proposed grading scheme assumes, that the test tool provides an indexed result such that when calculating grades we can randomly access each sub result. Since the grading scheme hard-codes test-tool-specific sub-result-labels, such a grading scheme has a lower chance to be exchanged between graders, especially between different test tool backends.
 
 #### Example 5. Combining sub tests and nullify conditions
@@ -397,24 +355,26 @@ The topology shows the following graphic. There is a node ``test.max`` not conne
 
 
 
-A possible representation in a front end is as follows. It does deviate from the previous one in a single cell at row 4, column 6:
+A possible representation in a front end is as follows. It does deviate from the previous one in the "Compilation" row:
 
-> |                 |        |                    |        | <- Aspect           |                 Score -> |                           |                |
-> |-----------------|-------:|--------------------|-------:|---------------------|-------------------------:|--------------------------:|---------------:|
-> | _Total_         |        |                    |        |                     |                          |                           |  _Total Score_ |
-> | Weighted sum of | x 0.75 | _Basic aspects_    |        |                     |                          |     _Basic aspects Score_ |                |
-> |                 |        | Weighted sum of    | x 0.30 | Compilation         | 1.00 -> 1.00 __details__ |                           |                |
-> |                 |        |                    | x 0.70 | Unit test, aspect A |         0.15 __details__ |                      0.41 |                |
-> |                 | x 0.25 | _Advanced aspects_ |        |                     |                          |  _Advanced aspects Score_ |                |
-> |                 |        | Minimum of         |        | Unit test, aspect B |         0.75 __details__ |                           |                |
-> |                 |        |                    |        | PMD                 |         0.40 __details__ |                           |                |
-> |                 |        |                    |        | Checkstyle          |         0.90 __details__ |                      0.40 |       **0.40** |
+![Feedback for example 5](images/whitepaper-grades-example-img-6.png){ width=600px }
 
-The Compilation Score does not get nullified, because the maximum of tc.a and tc.b scores is \>= 0.5. The user could get the following, automatically generated explanation when clicking on the __details__ link besides the "1.00 -\> 1.00" mark:
+The Compilation Score does not get nullified, because the maximum of tc.a and tc.b scores is \>= 0.5. The user gets the following, automatically generated explanation: 
 
-> When calculating the _Basic aspects Score_ your _Compilation Score_ was not nullified. Reason: _Best result of all unit test aspects_ should be \>= 0.5 and was 0.75.
+> No reduction to 0.00, because unweighted _Best result of all unit test aspects_ score should be \>= 0.5, and was 0.75
 
-If deemed necessary, the explanation could be extended by an extra table that explains the calculation of ``test2.max``'s score, but usually a carefully chosen display title for the ``test.max`` node might be less confusing.
+If deemed necessary, the explanation could be extended by an extra table or sublist that explains the calculation of ``test2.max``'s score like illustrated below, but usually a carefully chosen display title for the ``test.max`` node might be less confusing.
+
+> Score is calculated as (from left to right)
+>
+>  - &#9654; Test result
+>  - &#9654; Nullification. No reduction to 0.00, because the _Best result of all unit test aspects_ score should be >= 0.5, and was 0.75  
+>    &nbsp;&nbsp;&nbsp;The _Best result of all unit test aspects_ score is calculated as 
+>     - Max of the following sub aspect scores
+>         * _Unit test, aspect A_ score. Score is directly taken from Test result.
+>         * _Unit test, aspect B_ score. Score is directly taken from Test result.
+>  - &#9654; Multiplication by a weight factor 0.30
+
 
 By the way: the same effect of nullifying the compilation score when the best unit test result is less than 0.5 could have been reached by a composite nullify condition.
 
@@ -459,16 +419,16 @@ By the way: the same effect of nullifying the compilation score when the best un
 
 This time the user could get the following detail information, that can be generated automatically from the grading scheme:
 
-> **Compilation score gets nullified when all unit tests miss 0.5**
+> Score is calculated as (from left to right)
 >
-> Students are not allowed to *steal* compilation points by submitting fake programs with near-to-zero functionality. That's why compilation score gets nullified when there is no successful unit test.
-> 
-> When calculating the _Basic aspects Score_ your _Compilation Score_ was __not__ nullified. 
-> 
-> Reason: At least one of the following conditions was True:
->
->   - _Unit test, aspect A_ should be \>= 0.5 and was 0.15.
->   - _Unit test, aspect B_ should be \>= 0.5 and was 0.75.
+>  - &#9654; Test result
+>  - &#9654; Compilation score gets nullified when all unit tests miss 0.5  
+>    &nbsp;&nbsp;&nbsp;Students are not allowed to *steal* compilation points by submitting fake programs with near-to-zero functionality. That's why compilation score gets nullified when there is no successful unit test.  
+>    &nbsp;&nbsp;&nbsp;No reduction to 0.00, because at least one of the following conditions was True:
+>      * _Unit test, aspect A_ should be \>= 0.5 and was 0.15.
+>      * _Unit test, aspect B_ should be \>= 0.5 and was 0.75.
+>  - &#9654; Multiplication by a weight factor 0.30
+
 
 The advantage of this approach is that of saving on an additional tree node. It depends on the task and the condition, whether an additional (reusable) tree node is better suited or the (nestable) composite nullify conditions. 
 
@@ -577,7 +537,6 @@ The above \<root\> and \<combine\> elements both are of the following grades-nod
                     <xs:enumeration value="min"/>
                     <xs:enumeration value="max"/>
                     <xs:enumeration value="sum"/>
-                    <xs:enumeration value="avg"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -616,7 +575,7 @@ The grades-node-type represents an inner node of the grading scheme hierarchy. T
    
  - **function**
  
-   Accumulator function that is used to condense several sub results to a single result. Currently there are four functions to choose from:
+   Accumulator function that is used to condense several sub results to a single result. Currently there are three functions to choose from:
    
    * **min**
      
@@ -629,10 +588,6 @@ The grades-node-type represents an inner node of the grading scheme hierarchy. T
    - **sum**
    
      Specifies the sum of several sub scores. This is used in a situation, where every child represents a problem aspect that could be solved more or less independently of the other aspects. Weights can be attached to child nodes. Those child nodes representing easy problem aspects could get lower weights than other aspects. If all weights of all direct children of a node add up to 1, this would guarantee, that the parent node result is in [0,1] when all child nodes results are in [0,1].
-     
-   - **avg**
-   
-     Specifies the arithmetic mean of several sub scores. This is the special case of a sum with equal weights for every child while all weights add up to 1. Child nodes of an "avg"-node should not get any weights because in that case weights are ignored.
      
      
 #### test-ref and combine-ref - elements of the grades-base-ref-child-type
@@ -687,7 +642,7 @@ We first discuss the common elements of both kinds of pointers.
 
  - **weight**
  
-   Specifies a weight that is multiplied to the sub result of the pointed-at node when flowing into the accumulator function. The pointed-at node is a test or a combine node. When calculating the condensed result for the pointing-from node, the score of the pointed-at node is multiplied by the weight, if present. Otherwise nothing is multiplied. A special case is together with the accumulator function _avg_ where possibly attributed weights are completely ignored.
+   Specifies a weight that is multiplied to the sub result of the pointed-at node when flowing into the accumulator function. The pointed-at node is a test or a combine node. When calculating the condensed result for the pointing-from node, the score of the pointed-at node is multiplied by the weight, if present. Otherwise nothing is multiplied.
 
       
 ##### Specific sub elements of the combine-ref element

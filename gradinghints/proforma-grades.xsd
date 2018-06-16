@@ -83,11 +83,6 @@
                             <xs:documentation xml:lang="en">Specifies the sum of several sub scores. This is used in a situation, where every child represents a problem aspect that could be solved more or less independently of the other aspects. Weights can be attached to child nodes. Those child nodes representing easy problem aspects could get lower weights than other aspects. If all weights of all direct children of a node add up to 1, this would guarantee, that the parent node result is in [0,1] when all child nodes results are in [0,1].</xs:documentation>
                         </xs:annotation>
                     </xs:enumeration>
-                    <xs:enumeration value="avg">
-                        <xs:annotation>
-                            <xs:documentation xml:lang="en">Specifies the average of several sub scores. This is the special case of a sum with equal weights for every child while all weights add up to 1. Child nodes of an "avg"-node should not get any weights because in that case weights are ignored.</xs:documentation>
-                        </xs:annotation>
-                    </xs:enumeration>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -112,7 +107,7 @@
         </xs:sequence>
         <xs:attribute name="weight" type="xs:double" use="optional" >
             <xs:annotation>
-                <xs:documentation xml:lang="en">Specifies a weight that is multiplied to the sub result of the pointed-at node when flowing into the accumulator function. The pointed-at node is a test or a combine node. When calculating the condensed result for the pointing-from node, the score of the pointed-at node is multiplied by the weight, if present. Otherwise nothing is multiplied. A special case is together with the accumulator function "avg" where possibly attributed weights are completely ignored.</xs:documentation>
+                <xs:documentation xml:lang="en">Specifies a weight that is multiplied to the sub result of the pointed-at node when flowing into the accumulator function. The pointed-at node is a test or a combine node. When calculating the condensed result for the pointing-from node, the score of the pointed-at node is multiplied by the weight, if present. Otherwise nothing is multiplied.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
