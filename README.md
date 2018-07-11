@@ -1,5 +1,5 @@
 This is an old version (up to version 1.1).
-The new version contains XML for the submission and the response in addition to the original XML for the task.
+The new version contains XML for the submission and the response in addition to the original XML for the task and is available at https://github.com/ProFormA/proformaxml
 
 taskxml
 =======
