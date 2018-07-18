@@ -146,8 +146,6 @@ subset of HTML is allowed (see Appendix A).
       </xs:complexType>
     </xs:element>
 ```
-https://github.com/ProFormA/taskxml/blob/489cf76f69987370487bb9100db12ba65204c419/taskxml.xsd#L144-L150
-
 
 An instance of this element contains the programming/modelling/query
 language to which this task applies. A valid list of values is specified
