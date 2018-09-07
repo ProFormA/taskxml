@@ -358,7 +358,7 @@ The following illustrates the topology of this grading scheme:
 	                     +------------------------------+
 	                          nullify if < 0.5
 
-A possible representation in a front end can be generated automatically from the generated as follows. It does deviate from the previous one in the "Compilation" row:
+A possible representation in a front end can be generated automatically from the grading scheme as follows. It does deviate from the previous one in the "Compilation" row:
 
 ![Feedback for example 5](images/whitepaper-grades-example-img-6.png)
 
