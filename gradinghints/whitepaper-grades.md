@@ -340,6 +340,7 @@ An author can combine sub test references and nullifications. As an example we e
 ```
 
 The following illustrates the topology of this grading scheme:
+
                                               +--------+
                          +--------------------+  root  +--------+
                          |                    +--------+        |
