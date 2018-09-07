@@ -298,84 +298,7 @@ A caveat: The labels ``tc.a`` and ``tc.b`` are specific to the test tool. The pr
 
 #### Example 5. Combining sub tests and nullify conditions
 
-An author can combine sub test references and nullifications. As an example we extend the [previous example](#example-4-referencing-tests-and-sub-tests). The author wants to nullify the score from the compilation test when all unit test cases miss the bar "0.5". For this in the following example the author adds one additional ``combine`` node labeld ``test2.max`` expressing the maximum of all unit test cases. With the new ``test2.max`` node it is easy to nullify the ``test1`` result, if the ``test2.max`` value is less than 0.5:
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<tns:grading-hints xmlns:tns="urn:proforma:grades:v0.8">
-    <tns:root function="sum">
-        <tns:displaytitle>Total</tns:displaytitle>
-        <tns:combine-ref weight="0.75" ref="basic"/>
-        <tns:combine-ref weight="0.25" ref="advanced"/>
-    </tns:root>
-    <tns:combine id="basic" function="sum">
-        <tns:displaytitle>Basic aspects</tns:displaytitle>
-        <tns:test-ref weight="0.3" ref="test1">
-            <tns:nullify-condition compare-op="lt">
-                <tns:nullify-combine-ref ref="test2.max"/>
-                <tns:nullify-literal value="0.5"/>
-            </tns:nullify-condition>
-        </tns:test-ref>
-        <tns:test-ref weight="0.7" ref="test2" sub-ref="tc.a">
-            <tns:displaytitle>Unit test, aspect A</tns:displaytitle>
-        </tns:test-ref>
-    </tns:combine>
-    <tns:combine id="advanced" function="min">
-        <tns:displaytitle>Advanced aspects</tns:displaytitle>
-        <tns:test-ref ref="test2" sub-ref="tc.b">
-            <tns:displaytitle>Unit test, aspect B</tns:displaytitle>
-        </tns:test-ref>
-        <tns:test-ref ref="test3"/>
-        <tns:test-ref ref="test4"/>
-    </tns:combine>
-    <tns:combine id="test2.max" function="max">
-        <tns:displaytitle>Best result of all unit test aspects</tns:displaytitle>
-        <tns:test-ref ref="test2" sub-ref="tc.a"/>
-        <tns:test-ref ref="test2" sub-ref="tc.b"/>
-    </tns:combine>
-</tns:grading-hints>
-```
-
-The topology shows the following graphic. There is a node ``test.max`` not connected to the root via ordinary tree edges. The only purpose of the tree rooted at ``test2.max`` is a nullification condition of the edge between ``basic`` and ``test1``.
-
-                                                             +--------+
-                                                      +------+  root  +--------+
-                                                      |      +--------+        |
-                                                      |                        |
-          +-----------+   nullify if <0.5     +-------+--+               +-----+-------------------+
-          | test2.max +<---------+            |  basic   |               | advanced                |
-          ++-------+--+          |            ++-------+-+               +-+------------+--------+-+
-           |       |             |             |       |                   |            |        |
-    +------+---+  ++---------+   +------------(|       |                   |            |        |
-    |test2/tc.a|  |test2/tc.b|                 |       |                   |            |        |
-    +----------+  +----------+           +-----+-+   +-+----------+   +----+-------+ +--+----+ +-+-----+
-                                         | test1 |   | test2/tc.a |   | test2/tc.b | | test3 | | test4 |
-                                         +-------+   +------------+   +------------+ +-------+ +-------+
-
-
-
-A possible representation in a front end is as follows. It does deviate from the previous one in the "Compilation" row:
-
-![Feedback for example 5](images/whitepaper-grades-example-img-6.png)
-
-The Compilation Score does not get nullified, because the maximum of tc.a and tc.b scores is \>= 0.5. The user gets the following, automatically generated explanation: 
-
-> No reduction to 0.00, because unweighted _Best result of all unit test aspects_ score should be \>= 0.5, and was 0.75
-
-If deemed necessary, the explanation could be extended by an extra table or sublist that explains the calculation of ``test2.max``'s score like illustrated below, but usually a carefully chosen display title for the ``test.max`` node might be less confusing.
-
-> Score is calculated as (from left to right)
->
->  - &#9654; Test result
->  - &#9654; Nullification. No reduction to 0.00, because the _Best result of all unit test aspects_ score should be >= 0.5, and was 0.75  
->    &nbsp;&nbsp;&nbsp;The _Best result of all unit test aspects_ score is calculated as 
->     - Max of the following sub aspect scores
->         * _Unit test, aspect A_ score. Score is directly taken from Test result.
->         * _Unit test, aspect B_ score. Score is directly taken from Test result.
->  - &#9654; Multiplication by a weight factor 0.30
-
-
-By the way: the same effect of nullifying the compilation score when the best unit test result is less than 0.5 could have been reached by a composite nullify condition.
+An author can combine sub test references and nullifications. As an example we extend the [previous example](#example-4-referencing-tests-and-sub-tests). The author wants to nullify the score from the compilation test when all unit test cases miss the bar "0.5". For this in the following example the author decides to add a composite nullify condition. The best unit test result is less than 0.5, if both ``test2/tc.a`` and ``test2/tc.b`` are less than 0.5:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -416,22 +339,36 @@ By the way: the same effect of nullifying the compilation score when the best un
 </tns:grading-hints>
 ```
 
-This time the user could get the following detail information, that can be generated automatically from the grading scheme:
+The following illustrates the topology of this grading scheme:
+                                              +--------+
+                         +--------------------+  root  +--------+
+                         |                    +--------+        |
+                         |                                      |
+                  +------+---+                            +-----+-------------------+
+        +---------+  basic   +----------+                 | advanced                |
+        |         +----------+          |                 +-+------------+--------+-+
+        |                               |                   |            |        |
+        |)------------>+---+            |                   |            |        |
+        |  nullify if  |and|            |                   |            |        |
+    +---+---+          +-+-+--------->+-+----------+   +----+-------+ +--+----+ +-+-----+
+    | test1 |            |   nullify  | test2/tc.a |   | test2/tc.b | | test3 | | test4 |
+    +-------+            |   if < 0.5 +------------+   +------------+ +-------+ +-------+
+                         |                              ^ 
+	                     +------------------------------+
+	                          nullify if < 0.5
 
-> Score is calculated as (from left to right)
->
->  - &#9654; Test result
->  - &#9654; Compilation score gets nullified when all unit tests miss 0.5  
->    &nbsp;&nbsp;&nbsp;Students are not allowed to *steal* compilation points by submitting fake programs with near-to-zero functionality. That's why compilation score gets nullified when there is no successful unit test.  
->    &nbsp;&nbsp;&nbsp;No reduction to 0.00, because at least one of the following conditions was True:
->      * _Unit test, aspect A_ should be \>= 0.5 and was 0.15.
->      * _Unit test, aspect B_ should be \>= 0.5 and was 0.75.
->  - &#9654; Multiplication by a weight factor 0.30
+A possible representation in a front end can be generated automatically from the generated as follows. It does deviate from the previous one in the "Compilation" row:
 
+![Feedback for example 5](images/whitepaper-grades-example-img-6.png)
 
-The advantage of this approach is that of saving on an additional tree node. It depends on the task and the condition, whether an additional (reusable) tree node is better suited or the (nestable) composite nullify conditions. 
+The Compilation Score does not get nullified, because the maximum of tc.a and tc.b scores is \>= 0.5. The user gets the following, automatically generated explanation: 
+
+> No reduction to 0.00, because at least one of the following conditions was True
+> ...
 
 The last example demonstrates using a description element in the nullify-conditions element. The ProFormA grading-hints can define many descriptions at various places. All descriptions are in HTML format.
+
+A different approach could have been to define a simple, non-composite nullify condition that references an additional ``combine`` node expressing the maximum of all unit test cases. But, such an additional ``combine`` node would be referenced only by the nullify condition and not by a regular tree edge. The current version of the grading-hints scheme does not allow ``combine`` nodes missing a regular path to the grading scheme root node.
 
 #### Example 6. Last: a very simple example
 
